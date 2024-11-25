@@ -1,0 +1,17 @@
+# OS-specific
+.DS_Store
+
+# Editor-specific
+.idea/
+.vs/
+.vscode/
+
+# CMake
+build/
+cmake-build-*/
+prefix/
+
+.clangd
+CMakeLists.txt.user
+CMakeUserPresets.json
+compile_commands.json
