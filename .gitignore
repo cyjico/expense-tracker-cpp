@@ -10,8 +10,10 @@
 build/
 cmake-build-*/
 prefix/
-
-.clangd
 CMakeLists.txt.user
 CMakeUserPresets.json
+
+# Clang
+.clangd
 compile_commands.json
+.cache/
