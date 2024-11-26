@@ -31,7 +31,7 @@ if(CLANG_FORMAT_BIN)
     COMMAND ${CLANG_FORMAT_BIN} -i -style=file ${SRC_FILES} ${INCLUDE_FILES}
     COMMENT "Running clang-format on source and include files")
 else()
-  message(WARNING "clang-format not found. Skipping format.")
+  message(WARNING "clang-format not found. Skipping formatting.")
 endif()
 
 # Setup cppcheck
@@ -45,7 +45,20 @@ if(CPPCHECK_BIN)
       ${INCLUDE_FILES}
     COMMENT "Running cppcheck on source and include files")
 else()
-  message(WARNING "cppcheck not found. Skipping static analysis.")
+  message(WARNING "cppcheck not found. Skipping cppcheck.")
 endif()
 
-add_dependencies(${PROJECT_NAME} cppcheck clang-format)
+# Setup clang-tidy
+find_program(CLANG_TIDY_BIN clang-tidy)
+if(CLANG_TIDY_BIN)
+  set(CMAKE_CXX_CLANG_TIDY ${CLANG_TIDY_BIN})
+
+  add_custom_target(
+    clang-tidy
+    COMMAND ${CLANG_TIDY_BIN} -p=build/ ${SRC_FILES}
+    COMMENT "Running clang-tidy on source and include files")
+else()
+  message(WARNING "clang-tidy not found. Skipping clang-tidy.")
+endif()
+
+add_dependencies(${PROJECT_NAME} cppcheck clang-tidy clang-format)

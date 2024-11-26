@@ -9,4 +9,5 @@ Final project for CS 1131.
 Ensure the following tools are installed:
 
 - **[clang-format](https://releases.llvm.org/)** (used for code formatting)
+- **[clang-tidy](https://releases.llvm.org/)** (used for static code analysis)
 - **[cppcheck](https://github.com/danmar/cppcheck)** (used for static code analysis)
