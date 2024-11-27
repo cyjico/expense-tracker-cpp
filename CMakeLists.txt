@@ -54,11 +54,20 @@ if(CLANG_TIDY_BIN)
   set(CMAKE_CXX_CLANG_TIDY ${CLANG_TIDY_BIN})
 
   add_custom_target(
-    clang-tidy
-    COMMAND ${CLANG_TIDY_BIN} -p=build/ ${SRC_FILES}
+    clang-tidy-check
+    COMMAND ${CLANG_TIDY_BIN} -p=${CMAKE_BINARY_DIR} ${SRC_FILES}
     COMMENT "Running clang-tidy on source and include files")
+
+  add_custom_target(
+    clang-tidy-fix
+    COMMAND ${CLANG_TIDY_BIN} --fix -p=${CMAKE_BINARY_DIR} ${SRC_FILES}
+    COMMENT "Running clang-tidy with --fix on source and include files")
 else()
   message(WARNING "clang-tidy not found. Skipping clang-tidy.")
 endif()
 
-add_dependencies(${PROJECT_NAME} cppcheck clang-tidy clang-format)
+add_custom_target(
+  all-utility
+  DEPENDS clang-format cppcheck clang-tidy-check
+  COMMENT "Running clang-format, cppcheck, and clang-tidy-check together."
+)
