@@ -21,9 +21,9 @@ set(SRC_FILES
     ${SRC_DIR}/util.cpp)
 
 set(INCLUDE_FILES
-    ${SRC_DIR}/pages/add_expense_page.h ${SRC_DIR}/pages/home_page.h
-    ${SRC_DIR}/application.h ${SRC_DIR}/date.h ${SRC_DIR}/main.h
-    ${SRC_DIR}/util.h)
+    ${INCLUDE_DIR}/pages/add_expense_page.h ${INCLUDE_DIR}/pages/home_page.h
+    ${INCLUDE_DIR}/application.h ${INCLUDE_DIR}/date.h ${INCLUDE_DIR}/main.h
+    ${INCLUDE_DIR}/util.h)
 
 include_directories(${INCLUDE_DIR})
 add_executable(${PROJECT_NAME} ${SRC_FILES})
