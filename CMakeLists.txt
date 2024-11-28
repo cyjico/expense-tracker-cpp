@@ -14,6 +14,8 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set(INCLUDE_DIR ${CMAKE_SOURCE_DIR}/include)
 set(INCLUDE_FILES
+    ${INCLUDE_DIR}/observer_pattern/observer.hpp
+    ${INCLUDE_DIR}/observer_pattern/subject.hpp
     ${INCLUDE_DIR}/pages/add_expense_page.h
     ${INCLUDE_DIR}/pages/home_page.h
     ${INCLUDE_DIR}/pages/abstract_page.h
