@@ -12,20 +12,23 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-set(SRC_DIR ${CMAKE_SOURCE_DIR}/src)
 set(INCLUDE_DIR ${CMAKE_SOURCE_DIR}/include)
+set(INCLUDE_FILES
+    ${INCLUDE_DIR}/pages/add_expense_page.h
+    ${INCLUDE_DIR}/pages/home_page.h
+    ${INCLUDE_DIR}/abstract_page.h
+    ${INCLUDE_DIR}/application.h
+    ${INCLUDE_DIR}/date.h
+    ${INCLUDE_DIR}/util.h)
 
+include_directories(${INCLUDE_DIR})
+
+set(SRC_DIR ${CMAKE_SOURCE_DIR}/src)
 set(SRC_FILES
     ${SRC_DIR}/pages/add_expense_page.cpp ${SRC_DIR}/pages/home_page.cpp
     ${SRC_DIR}/application.cpp ${SRC_DIR}/date.cpp ${SRC_DIR}/main.cpp
     ${SRC_DIR}/util.cpp)
 
-set(INCLUDE_FILES
-    ${INCLUDE_DIR}/pages/add_expense_page.h ${INCLUDE_DIR}/pages/home_page.h
-    ${INCLUDE_DIR}/application.h ${INCLUDE_DIR}/date.h ${INCLUDE_DIR}/main.h
-    ${INCLUDE_DIR}/util.h)
-
-include_directories(${INCLUDE_DIR})
 add_executable(${PROJECT_NAME} ${SRC_FILES})
 
 target_compile_options(${PROJECT_NAME} PRIVATE -Wall)
