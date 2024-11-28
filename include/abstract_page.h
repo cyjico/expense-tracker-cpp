@@ -16,7 +16,7 @@ class abstract_page {
 public:
   virtual ~abstract_page() = default;
 
-  virtual void render(std::ostream &cout) = 0;
+  virtual void render(application &app, std::ostream &cout) = 0;
   virtual update_action update(application &app, std::istream &cin) = 0;
 };
 // NOLINTEND(hicpp-special-member-functions)

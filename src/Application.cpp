@@ -17,7 +17,7 @@ void application::run_indefinitely() {
     case update_action::skip_render_next_frame:
       break;
     case update_action::render_next_frame:
-      page->render(std::cout);
+      page->render(*this, std::cout);
       break;
     case update_action::exit:
       return;

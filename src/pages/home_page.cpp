@@ -7,7 +7,7 @@
 
 home_page::home_page() = default;
 
-void home_page::render(std::ostream &cout) {
+void home_page::render(application & /*app*/, std::ostream &cout) {
   // \x1B      => ASCII escape character in hexadecimal
   // \x1B[2J   => Clear entire screen (J) from top to bottom (2)
   // \x1B[1;1H => Position cursor at 1st row (1) and 1st column (1H)

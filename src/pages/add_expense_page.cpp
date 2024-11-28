@@ -9,7 +9,7 @@
 
 add_expense_page::add_expense_page() : m_date(0, 0, 0), m_amount(0) {};
 
-void add_expense_page::render(std::ostream &cout) {
+void add_expense_page::render(application & /*app*/, std::ostream &cout) {
   cout << "\x1B[2J\x1B[1;1H";
 
   cout << m_alert_msg;
