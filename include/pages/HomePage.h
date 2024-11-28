@@ -1,9 +1,9 @@
 #pragma once
 #include "AbstractPage.h"
 
-class IndexPage : public AbstractPage {
+class HomePage : public AbstractPage {
 public:
-  IndexPage();
+  HomePage();
 
   void Render(std::ostream &cout) override;
   UpdateAction Update(Application &app, std::istream &cin) override;

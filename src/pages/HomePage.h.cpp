@@ -1,12 +1,12 @@
-#include "pages/IndexPage.h"
+#include "pages/HomePage.h"
 #include "AbstractPage.h"
 #include "Application.h"
 #include "util.h"
 #include <iostream>
 
-IndexPage::IndexPage() = default;
+HomePage::HomePage() = default;
 
-void IndexPage::Render(std::ostream &cout) {
+void HomePage::Render(std::ostream &cout) {
   // \x1B      => ASCII escape character in hexadecimal
   // \x1B[2J   => Clear entire screen (J) from top to bottom (2)
   // \x1B[1;1H => Position cursor at 1st row (1) and 1st column (1H)
@@ -20,7 +20,7 @@ void IndexPage::Render(std::ostream &cout) {
           "5. Save and Exit\n";
 }
 
-UpdateAction IndexPage::Update(Application &app, std::istream &cin) {
+UpdateAction HomePage::Update(Application &app, std::istream &cin) {
   int inp = 0;
   cin >> inp;
 
