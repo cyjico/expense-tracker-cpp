@@ -55,11 +55,13 @@ if(CLANG_TIDY_BIN)
   add_custom_target(
     clang-tidy-check
     COMMAND ${CLANG_TIDY_BIN} -p=${CMAKE_BINARY_DIR} ${SRC_FILES}
+            ${INCLUDE_FILES}
     COMMENT "Running clang-tidy on source and include files")
 
   add_custom_target(
     clang-tidy-fix
     COMMAND ${CLANG_TIDY_BIN} --fix -p=${CMAKE_BINARY_DIR} ${SRC_FILES}
+            ${INCLUDE_FILES}
     COMMENT "Running clang-tidy with --fix on source and include files")
 else()
   message(WARNING "clang-tidy not found. Skipping clang-tidy.")

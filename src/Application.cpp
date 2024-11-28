@@ -1,42 +1,42 @@
-#include "Application.h"
-#include "AbstractPage.h"
+#include "application.h"
+#include "abstract_page.h"
 #include <iostream>
 #include <stdexcept>
 #include <string>
 #include <utility>
 
-Application::Application(PageMap pages) : pages(std::move(pages)) {}
+application::application(page_map pages) : m_pages(std::move(pages)) {}
 
-void Application::RunIndefinitely() {
-  UpdateAction action = UpdateAction::RENDER_NEXT_FRAME;
+void application::run_indefinitely() {
+  update_action action = update_action::render_next_frame;
 
   while (true) {
-    auto page = this->pages.at(this->cur_address);
+    auto page = m_pages.at(m_cur_address);
 
     switch (action) {
-    case UpdateAction::SKIP_RENDER_NEXT_FRAME:
+    case update_action::skip_render_next_frame:
       break;
-    case UpdateAction::RENDER_NEXT_FRAME:
-      page->Render(std::cout);
+    case update_action::render_next_frame:
+      page->render(std::cout);
       break;
-    case UpdateAction::EXIT:
+    case update_action::exit:
       return;
     }
 
-    action = page->Update(*this, std::cin);
+    action = page->update(*this, std::cin);
   }
 }
 
-void Application::Redirect(const std::string &new_address) {
-  if (this->pages.find(new_address) == this->pages.end()) {
+void application::redirect(const std::string &new_address) {
+  if (m_pages.find(new_address) == m_pages.end()) {
     throw std::invalid_argument(R"(Address ")" + new_address +
                                 R"(" does not exist.)");
   }
 
-  this->cur_address = new_address;
+  m_cur_address = new_address;
 }
 
-void Application::InsertOrAssignSharedData(const std::string &key,
-                                           std::string value) {
-  shared_data.insert_or_assign(key, value);
+void application::insert_or_assign_shared_data(const std::string &key,
+                                               std::string value) {
+  m_shared_data.insert_or_assign(key, value);
 }

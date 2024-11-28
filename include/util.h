@@ -4,8 +4,8 @@
 
 namespace util {
 
-bool ClearFailedIstream(std::istream &cin);
+bool clear_failed_istream(std::istream &cin);
 
-std::string TrimString(const std::string &str);
+std::string trim_string(const std::string &str);
 
 } // namespace util

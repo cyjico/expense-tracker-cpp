@@ -2,13 +2,13 @@
 #include <cstdint>
 #include <string>
 
-struct Date {
+struct date {
   uint8_t day;
   uint8_t month;
   uint16_t year;
 
-  Date(uint8_t day, uint8_t month, uint16_t year);
+  date(uint8_t day, uint8_t month, uint16_t year);
 
-  std::string ToString() const;
-  bool IsValid() const;
+  std::string to_string() const;
+  bool is_valid() const;
 };

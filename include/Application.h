@@ -2,24 +2,25 @@
 #include <memory>
 #include <string>
 #include <unordered_map>
-class AbstractPage;
+class abstract_page;
 
-using PageMap = std::unordered_map<std::string, std::shared_ptr<AbstractPage>>;
+using page_map =
+    std::unordered_map<std::string, std::shared_ptr<abstract_page>>;
 
-class Application {
-  PageMap pages;
-  std::string cur_address = "/";
+class application {
+  page_map m_pages;
+  std::string m_cur_address = "/";
 
-  std::unordered_map<std::string, std::string> shared_data;
+  std::unordered_map<std::string, std::string> m_shared_data;
 
 public:
-  explicit Application(PageMap pages);
+  explicit application(page_map pages);
 
-  void RunIndefinitely();
-  void Redirect(const std::string &new_address);
+  void run_indefinitely();
+  void redirect(const std::string &new_address);
 
-  const std::unordered_map<const std::string, std::string> &GetSharedData();
-  void InsertOrAssignSharedData(const std::string &key, std::string value);
-  bool EraseSharedData(const std::string &key);
-  const std::string &AtSharedData(const std::string &key);
+  const std::unordered_map<const std::string, std::string> &get_shared_data();
+  void insert_or_assign_shared_data(const std::string &key, std::string value);
+  bool erase_shared_data(const std::string &key);
+  const std::string &at_shared_data(const std::string &key);
 };

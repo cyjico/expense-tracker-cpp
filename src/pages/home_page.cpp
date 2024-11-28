@@ -1,12 +1,12 @@
-#include "pages/HomePage.h"
-#include "AbstractPage.h"
-#include "Application.h"
+#include "pages/home_page.h"
+#include "abstract_page.h"
+#include "application.h"
 #include "util.h"
 #include <iostream>
 
-HomePage::HomePage() = default;
+home_page::home_page() = default;
 
-void HomePage::Render(std::ostream &cout) {
+void home_page::render(std::ostream &cout) {
   // \x1B      => ASCII escape character in hexadecimal
   // \x1B[2J   => Clear entire screen (J) from top to bottom (2)
   // \x1B[1;1H => Position cursor at 1st row (1) and 1st column (1H)
@@ -20,12 +20,12 @@ void HomePage::Render(std::ostream &cout) {
           "5. Save and Exit\n";
 }
 
-UpdateAction HomePage::Update(Application &app, std::istream &cin) {
+update_action home_page::update(application &app, std::istream &cin) {
   int inp = 0;
   cin >> inp;
 
-  if (util::ClearFailedIstream(cin)) {
-    return UpdateAction::RENDER_NEXT_FRAME;
+  if (util::clear_failed_istream(cin)) {
+    return update_action::render_next_frame;
   }
 
   constexpr int add_expense = 1;
@@ -35,28 +35,28 @@ UpdateAction HomePage::Update(Application &app, std::istream &cin) {
   constexpr int save_and_exit = 5;
 
   if (inp < add_expense || inp > save_and_exit) {
-    return UpdateAction::RENDER_NEXT_FRAME;
+    return update_action::render_next_frame;
   }
 
   switch (inp) {
   case add_expense:
-    app.Redirect("/add-expense");
+    app.redirect("/add-expense");
     break;
   case view_expenses:
-    app.Redirect("/view-expense");
+    app.redirect("/view-expense");
     break;
   case search_expenses:
-    app.Redirect("/search-expenses");
+    app.redirect("/search-expenses");
     break;
   case generate_report:
-    app.Redirect("/generate-report");
+    app.redirect("/generate-report");
     break;
   case save_and_exit:
-    app.Redirect("/save-and-exit");
+    app.redirect("/save-and-exit");
     break;
   default:
     break;
   }
 
-  return UpdateAction::RENDER_NEXT_FRAME;
+  return update_action::render_next_frame;
 }

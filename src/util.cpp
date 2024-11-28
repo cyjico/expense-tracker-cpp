@@ -4,7 +4,7 @@
 #include <limits>
 #include <string>
 
-bool util::ClearFailedIstream(std::istream &cin) {
+bool util::clear_failed_istream(std::istream &cin) {
   if (cin.fail()) {
     // Clear error flag
     cin.clear();
@@ -16,7 +16,7 @@ bool util::ClearFailedIstream(std::istream &cin) {
   return false;
 }
 
-std::string util::TrimString(const std::string &str) {
+std::string util::trim_string(const std::string &str) {
   const size_t first = str.find_first_not_of(" \t\n\r\f\v");
   if (first == std::string::npos) {
     return "";
