@@ -7,15 +7,23 @@ project(
   HOMEPAGE_URL "https://github.com/cyjico/expense-tracker-cpp"
   LANGUAGES CXX)
 
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-set(SRC_DIR ${PROJECT_SOURCE_DIR}/src)
-set(INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-file(GLOB_RECURSE SRC_FILES ${SRC_DIR}/*.cpp)
-file(GLOB_RECURSE INCLUDE_FILES ${INCLUDE_DIR}/*.h)
+set(SRC_DIR ${CMAKE_SOURCE_DIR}/src)
+set(INCLUDE_DIR ${CMAKE_SOURCE_DIR}/include)
+
+set(SRC_FILES
+    ${SRC_DIR}/pages/add_expense_page.cpp ${SRC_DIR}/pages/home_page.cpp
+    ${SRC_DIR}/application.cpp ${SRC_DIR}/date.cpp ${SRC_DIR}/main.cpp
+    ${SRC_DIR}/util.cpp)
+
+set(INCLUDE_FILES
+    ${SRC_DIR}/pages/add_expense_page.h ${SRC_DIR}/pages/home_page.h
+    ${SRC_DIR}/application.h ${SRC_DIR}/date.h ${SRC_DIR}/main.h
+    ${SRC_DIR}/util.h)
 
 include_directories(${INCLUDE_DIR})
 add_executable(${PROJECT_NAME} ${SRC_FILES})
