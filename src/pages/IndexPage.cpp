@@ -1,8 +1,8 @@
 #include "pages/IndexPage.h"
 #include "AbstractPage.h"
 #include "Application.h"
+#include "util.h"
 #include <iostream>
-#include <limits>
 
 IndexPage::IndexPage() = default;
 
@@ -20,13 +20,11 @@ void IndexPage::Render(std::ostream &cout) {
           "5. Save and Exit\n";
 }
 
-UpdateAction IndexPage::Update(Application & /*app*/, std::istream &cin) {
+UpdateAction IndexPage::Update(Application &app, std::istream &cin) {
   int inp = 0;
   cin >> inp;
 
-  if (cin.fail()) {
-    cin.clear();
-    cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+  if (util::ClearFailedIstream(cin)) {
     return UpdateAction::RENDER;
   }
 
@@ -42,19 +40,20 @@ UpdateAction IndexPage::Update(Application & /*app*/, std::istream &cin) {
 
   switch (inp) {
   case add_expense:
-    // Switch to add expense
+    app.Redirect("/add-expense");
     break;
   case view_expenses:
-    // Switch to view expenses
+    app.Redirect("/view-expense");
     break;
   case search_expenses:
-    // Switch to search expenses by category
+    app.Redirect("/search-expenses");
     break;
   case generate_report:
-    // Switch to generate monthly report
+    app.Redirect("/generate-report");
     break;
   case save_and_exit:
-    return UpdateAction::EXIT;
+    app.Redirect("/save-and-exit");
+    break;
   default:
     break;
   }

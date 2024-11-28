@@ -5,7 +5,7 @@
 #include <string>
 #include <utility>
 
-Application::Application(PageMap pages_arg) : pages(std::move(pages_arg)) {}
+Application::Application(PageMap pages) : pages(std::move(pages)) {}
 
 void Application::RunIndefinitely() {
   UpdateAction action = UpdateAction::RENDER;
@@ -34,4 +34,9 @@ void Application::Redirect(const std::string &new_address) {
   }
 
   this->cur_address = new_address;
+}
+
+void Application::InsertOrAssignSharedData(const std::string &key,
+                                           std::string value) {
+  shared_data.insert_or_assign(key, value);
 }
