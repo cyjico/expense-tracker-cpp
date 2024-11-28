@@ -2,7 +2,6 @@
 #include "AbstractPage.h"
 #include "Date.h"
 #include <cstdint>
-
 struct Date;
 
 class AddExpensePage : public AbstractPage {
