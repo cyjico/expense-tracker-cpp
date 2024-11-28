@@ -13,7 +13,10 @@ Checks: "*,\
   -llvmlibc-*,\
   -modernize-use-nodiscard,\
   -misc-non-private-member-variables-in-classes,\
-  -modernize-use-trailing-return-type"
+  -modernize-use-trailing-return-type,\
+  -cppcoreguidelines-avoid-magic-numbers,\
+  -readability-magic-numbers,\
+  -readability-math-missing-parentheses"
 WarningsAsErrors: ""
 FormatStyle: "file"
 CheckOptions:
