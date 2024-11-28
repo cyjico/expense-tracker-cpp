@@ -98,11 +98,11 @@ update_action add_expense_page::update(application &app, std::istream &cin) {
     break;
   case state::end:
   default: {
-    std::ostringstream oss;
+    std::ostringstream oss(app.at_shared_datum("expense"));
     oss << m_date.to_string() << "," << m_category << "," << m_amount << ","
-        << m_desc;
+        << m_desc << "\n";
+    app.insert_or_assign_shared_datum("expense", oss.str());
 
-    app.insert_or_assign_shared_data("new_expense", oss.str());
     app.redirect("/");
   } break;
   }

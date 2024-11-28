@@ -26,6 +26,10 @@ update_action home_page::update(application &app, std::istream &cin) {
   cin >> inp;
   std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
+  if (!app.has_shared_datum("expense")) {
+    app.insert_or_assign_shared_datum("expense", "");
+  }
+
   if (util::clear_failed_istream(cin)) {
     return update_action::render_next_frame;
   }
