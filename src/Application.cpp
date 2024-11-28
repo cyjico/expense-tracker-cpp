@@ -8,7 +8,9 @@
 #include <unordered_map>
 #include <utility>
 
-application::application(page_map pages) : m_pages(std::move(pages)) {}
+application::application() = default;
+
+void application::initialize(page_map pages) { m_pages = std::move(pages); }
 
 void application::run_indefinitely() {
   update_action action = update_action::render_next_frame;

@@ -24,7 +24,9 @@ class application {
   application_events::page_subject m_onpageunload;
 
 public:
-  explicit application(page_map pages);
+  application();
+
+  void initialize(page_map pages);
 
   void run_indefinitely();
   void redirect(const std::string &new_address);
