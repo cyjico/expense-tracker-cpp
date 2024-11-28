@@ -7,6 +7,8 @@
 #include <string>
 
 class add_expense_page : public abstract_page {
+  std::string m_alert_msg;
+
   date m_date;
   std::string m_category;
   float m_amount;

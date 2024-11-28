@@ -12,6 +12,8 @@ add_expense_page::add_expense_page() : m_date(0, 0, 0), m_amount(0) {};
 void add_expense_page::render(std::ostream &cout) {
   cout << "\x1B[2J\x1B[1;1H";
 
+  cout << m_alert_msg;
+
   switch (m_state) {
   case state::prompt_date:
     cout << "Enter the date (dd/mm/yyyy): ";
@@ -38,37 +40,51 @@ update_action add_expense_page::update(application &app, std::istream &cin) {
   std::getline(cin, inp);
   inp = util::trim_string(inp);
 
+  m_alert_msg = "";
+
   switch (m_state) {
   case state::prompt_date: {
     // Matches dd/mm/yyyy
     const std::regex patt(R"(^([0-9]{2})/([0-9]{2})/([0-9]{4})$)");
     std::smatch match;
 
-    if (std::regex_match(inp, match, patt)) {
-      m_date.day = std::stoi(match[1].str());
-      m_date.month = std::stoi(match[2].str());
-      m_date.year = std::stoi(match[3].str());
-
-      if (m_date.is_valid()) {
-        m_state = state::prompt_category;
-      }
+    if (!std::regex_match(inp, match, patt)) {
+      m_alert_msg = "Invalid date format.\n";
+      break;
     }
+
+    m_date.day = std::stoi(match[1].str());
+    m_date.month = std::stoi(match[2].str());
+    m_date.year = std::stoi(match[3].str());
+
+    if (!m_date.is_valid()) {
+      m_alert_msg = "Invalid date range.\n";
+      break;
+    }
+
+    m_state = state::prompt_category;
   } break;
   case state::prompt_category:
-    if (!inp.empty()) {
-      m_category = inp;
-      m_state = state::prompt_amount;
+    if (inp.empty()) {
+      m_alert_msg = "Category cannot be empty.\n";
+      break;
     }
+
+    m_category = inp;
+    m_state = state::prompt_amount;
     break;
   case state::prompt_amount: {
     // Matches num.num or num
     const std::regex patt(R"(^[0-9]+\.?[0-9]+$)");
     std::smatch match;
 
-    if (std::regex_match(inp, match, patt)) {
-      m_amount = std::stof(match.str());
-      m_state = state::prompt_desc;
+    if (!std::regex_match(inp, match, patt)) {
+      m_alert_msg = "Invalid amount format.\n";
+      break;
     }
+
+    m_amount = std::stof(match.str());
+    m_state = state::prompt_desc;
   } break;
   case state::prompt_desc:
     m_desc = inp;

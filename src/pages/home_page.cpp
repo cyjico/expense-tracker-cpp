@@ -3,6 +3,7 @@
 #include "application.h"
 #include "util.h"
 #include <iostream>
+#include <limits>
 
 home_page::home_page() = default;
 
@@ -23,6 +24,7 @@ void home_page::render(std::ostream &cout) {
 update_action home_page::update(application &app, std::istream &cin) {
   int inp = 0;
   cin >> inp;
+  std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
   if (util::clear_failed_istream(cin)) {
     return update_action::render_next_frame;
