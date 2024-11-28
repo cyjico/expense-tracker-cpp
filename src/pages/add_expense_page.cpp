@@ -75,7 +75,7 @@ update_action add_expense_page::update(application &app, std::istream &cin) {
     break;
   case state::prompt_amount: {
     // Matches num.num or num
-    const std::regex patt(R"(^[0-9]+\.?[0-9]+$)");
+    const std::regex patt(R"(^-?[0-9]+\.?[0-9]+$)");
     std::smatch match;
 
     if (!std::regex_match(inp, match, patt)) {
@@ -84,6 +84,12 @@ update_action add_expense_page::update(application &app, std::istream &cin) {
     }
 
     m_amount = std::stof(match.str());
+
+    if (m_amount < 0) {
+      m_alert_msg = "Amount cannot be negative.\n";
+      break;
+    }
+
     m_state = state::prompt_desc;
   } break;
   case state::prompt_desc:
