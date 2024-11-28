@@ -82,8 +82,8 @@ UpdateAction AddExpensePage::Update(Application &app, std::istream &cin) {
     app.InsertOrAssignSharedData("new_expense", oss.str());
     app.Redirect("/");
   }
-    return UpdateAction::RENDER;
+    return UpdateAction::RENDER_NEXT_FRAME;
   }
 
-  return UpdateAction::RENDER;
+  return UpdateAction::RENDER_NEXT_FRAME;
 }

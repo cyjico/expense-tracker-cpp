@@ -25,7 +25,7 @@ UpdateAction IndexPage::Update(Application &app, std::istream &cin) {
   cin >> inp;
 
   if (util::ClearFailedIstream(cin)) {
-    return UpdateAction::RENDER;
+    return UpdateAction::RENDER_NEXT_FRAME;
   }
 
   constexpr int add_expense = 1;
@@ -35,7 +35,7 @@ UpdateAction IndexPage::Update(Application &app, std::istream &cin) {
   constexpr int save_and_exit = 5;
 
   if (inp < add_expense || inp > save_and_exit) {
-    return UpdateAction::RENDER;
+    return UpdateAction::RENDER_NEXT_FRAME;
   }
 
   switch (inp) {
@@ -58,5 +58,5 @@ UpdateAction IndexPage::Update(Application &app, std::istream &cin) {
     break;
   }
 
-  return UpdateAction::RENDER;
+  return UpdateAction::RENDER_NEXT_FRAME;
 }

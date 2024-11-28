@@ -4,8 +4,8 @@
 class Application;
 
 enum class UpdateAction : std::uint8_t {
-  NONE,
-  RENDER,
+  SKIP_RENDER_NEXT_FRAME,
+  RENDER_NEXT_FRAME,
   EXIT,
 };
 

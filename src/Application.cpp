@@ -8,15 +8,15 @@
 Application::Application(PageMap pages) : pages(std::move(pages)) {}
 
 void Application::RunIndefinitely() {
-  UpdateAction action = UpdateAction::RENDER;
+  UpdateAction action = UpdateAction::RENDER_NEXT_FRAME;
 
   while (true) {
     auto page = this->pages.at(this->cur_address);
 
     switch (action) {
-    case UpdateAction::NONE:
+    case UpdateAction::SKIP_RENDER_NEXT_FRAME:
       break;
-    case UpdateAction::RENDER:
+    case UpdateAction::RENDER_NEXT_FRAME:
       page->Render(std::cout);
       break;
     case UpdateAction::EXIT:
