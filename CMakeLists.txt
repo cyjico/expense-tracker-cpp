@@ -16,7 +16,7 @@ set(INCLUDE_DIR ${CMAKE_SOURCE_DIR}/include)
 set(INCLUDE_FILES
     ${INCLUDE_DIR}/pages/add_expense_page.h
     ${INCLUDE_DIR}/pages/home_page.h
-    ${INCLUDE_DIR}/abstract_page.h
+    ${INCLUDE_DIR}/pages/abstract_page.h
     ${INCLUDE_DIR}/application.h
     ${INCLUDE_DIR}/date.h
     ${INCLUDE_DIR}/util.h)

@@ -1,5 +1,5 @@
 #pragma once
-#include "abstract_page.h"
+#include "pages/abstract_page.h"
 #include <istream>
 #include <ostream>
 

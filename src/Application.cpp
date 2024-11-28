@@ -1,5 +1,5 @@
 #include "application.h"
-#include "abstract_page.h"
+#include "pages/abstract_page.h"
 #include <iostream>
 #include <stdexcept>
 #include <string>

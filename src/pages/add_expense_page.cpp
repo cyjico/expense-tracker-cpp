@@ -1,6 +1,6 @@
 #include "pages/add_expense_page.h"
-#include "abstract_page.h"
 #include "application.h"
+#include "pages/abstract_page.h"
 #include "util.h"
 #include <iostream>
 #include <regex>
