@@ -8,9 +8,11 @@
 #include <limits>
 #include <vector>
 
-home_page::home_page(application &app) {
+home_page::home_page() = default;
+
+void home_page::attach_listeners(application &app) {
   app.onpageload().add_listener([this](page_event evt) -> void {
-    if (evt.app->cur_page().get() != this) {
+    if (evt.app->cur_page() != shared_from_this()) {
       return;
     }
 
@@ -18,7 +20,7 @@ home_page::home_page(application &app) {
       evt.app->insert_or_assign_shared_datum("expense", std::vector<expense>());
     }
   });
-};
+}
 
 void home_page::render(application & /*app*/, std::ostream &cout) {
   // \x1B      => ASCII escape character in hexadecimal

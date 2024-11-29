@@ -6,7 +6,11 @@
 
 int main() {
   application app;
-  app.initialize({{"/", std::make_shared<home_page>(home_page(app))},
+
+  auto home_page_ptr = std::make_shared<home_page>(home_page());
+  home_page_ptr->attach_listeners(app);
+
+  app.initialize({{"/", home_page_ptr},
                   {"/add-expense",
                    std::make_shared<add_expense_page>(add_expense_page())}});
   app.run_indefinitely();
