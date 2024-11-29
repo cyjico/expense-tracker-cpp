@@ -12,7 +12,6 @@ add_expense_page::add_expense_page() = default;
 
 void add_expense_page::render(application & /*app*/, std::ostream &cout) {
   cout << "\x1B[2J\x1B[1;1H";
-
   cout << m_alert_msg;
 
   switch (m_state) {

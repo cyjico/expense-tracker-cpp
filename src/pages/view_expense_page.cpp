@@ -17,6 +17,13 @@ void view_expense_page::render_cell(std::ostream &cout,
   cout << text << std::string(times, ' ');
 }
 
+void view_expense_page::render_horizontal_rule(std::ostream &cout) const {
+  cout << std::string(static_cast<size_t>(
+                          (m_table_cell_width + m_table_cell_padding) * 4),
+                      '-')
+       << "\n";
+}
+
 view_expense_page::view_expense_page(uint32_t table_cell_padding)
     : m_table_cell_width(15), m_table_cell_padding(table_cell_padding) {}
 
@@ -46,35 +53,26 @@ void view_expense_page::render(application &app, std::ostream &cout) {
 
   render_row<std::string, std::string, std::string, std::string>(
       cout, "Date", "Category", "Amount", "Description");
-
-  cout << std::string(static_cast<size_t>(
-                          (m_table_cell_width + m_table_cell_padding) * 4),
-                      '-')
-       << "\n";
+  render_horizontal_rule(cout);
 
   auto expenses = app.at_shared_datum<std::vector<struct expense>>("expense");
   double total_expenses = 0;
   for (const auto &expense : expenses) {
+    total_expenses += expense.amount;
+
     render_cell(cout, expense.date.to_string());
     render_cell(cout, expense.category);
     render_cell(cout, utils::double_to_string(expense.amount));
-    total_expenses += expense.amount;
-
     render_cell(cout, expense.desc);
+
     cout << "\n";
   }
 
-  cout << std::string(static_cast<size_t>(
-                          (m_table_cell_width + m_table_cell_padding) * 4),
-                      '-')
-       << "\n"
-       << std::string(m_table_cell_width + m_table_cell_padding, ' ');
-
+  render_horizontal_rule(cout);
   render_cell(cout, "Total Expenses:");
   render_cell(cout, utils::double_to_string(total_expenses));
 
-  cout << std::string(m_table_cell_width + m_table_cell_padding, ' ')
-       << "\nPress enter to return to the main menu.\n";
+  cout << "\nPress enter to return to the main menu.\n";
 }
 
 update_action view_expense_page::update(application &app, std::istream &cin) {

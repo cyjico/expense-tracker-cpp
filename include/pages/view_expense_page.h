@@ -18,6 +18,8 @@ class view_expense_page
   template <typename... Args>
   void render_row(std::ostream &cout, const Args &&...args) const;
 
+  void render_horizontal_rule(std::ostream &cout) const;
+
 public:
   explicit view_expense_page(uint32_t table_cell_padding);
 
