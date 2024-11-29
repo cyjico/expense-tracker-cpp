@@ -95,14 +95,16 @@ update_action add_expense_page::update(application &app, std::istream &cin) {
   } break;
   case state::prompt_desc:
     m_expense.desc = inp;
+    app.at_shared_datum<std::vector<expense>>("expense").push_back(m_expense);
+
     m_state = state::end;
     break;
   case state::end:
-  default: {
-    app.at_shared_datum<std::vector<expense>>("expense").push_back(m_expense);
-
+  default:
     app.redirect("/");
-  } break;
+
+    m_state = state::prompt_date;
+    break;
   }
 
   return update_action::render_next_frame;
