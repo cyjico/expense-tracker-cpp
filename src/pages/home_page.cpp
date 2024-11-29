@@ -62,7 +62,7 @@ void home_page::render(application & /*app*/, std::ostream &cout) {
 
   cout << "1. Add Expense\n"
           "2. View Expenses\n"
-          "3. Search Expenses by Category\n"
+          "3. Search Expenses\n"
           "4. Generate Monthly Report\n"
           "5. Save and Exit\n";
 }
