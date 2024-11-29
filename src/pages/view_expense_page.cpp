@@ -72,7 +72,7 @@ void view_expense_page::render(application &app, std::ostream &cout) {
   render_cell(cout, "Total Expenses:");
   render_cell(cout, utils::double_to_string(total_expenses));
 
-  cout << "\nPress enter to return to the main menu.\n";
+  cout << "\n\nPress enter to return to the main menu.\n";
 }
 
 update_action view_expense_page::update(application &app, std::istream &cin) {
