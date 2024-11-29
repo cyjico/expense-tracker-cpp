@@ -1,9 +1,10 @@
 #include "date.h"
 #include <cstdint>
 #include <sstream>
+#include <stdexcept>
 #include <string>
 
-date::date() : day(0), month(0), year(0) {}
+date::date() : day(1), month(1), year(0) {}
 
 // Why? because, I do not know how to fix it 🤯
 // NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
@@ -21,4 +22,28 @@ bool date::is_valid() const {
   constexpr uint8_t max_months = 12;
 
   return day >= 1 && day <= max_days && month >= 1 && month <= max_months;
+}
+
+date date::from_string(const std::string &date_str) {
+  date date;
+
+  std::stringstream stream(date_str);
+
+  std::string day_str;
+  std::string month_str;
+  std::string year_str;
+  if (!std::getline(stream, day_str, '/') ||
+      !std::getline(stream, month_str, '/') ||
+      !std::getline(stream, year_str)) {
+    throw std::runtime_error(R"(Invalid date format: expected "dd/mm/yyyy")");
+  }
+
+  date.day = std::stoi(day_str);
+  date.month = std::stoi(month_str);
+  date.year = std::stoi(year_str);
+  if (!date.is_valid()) {
+    throw std::runtime_error("Invalid value/s for day, month, or/and year");
+  }
+
+  return date;
 }
