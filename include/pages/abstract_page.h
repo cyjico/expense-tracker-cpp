@@ -1,7 +1,6 @@
 #pragma once
 #include <cstdint>
-#include <istream>
-#include <ostream>
+#include <iostream>
 class application;
 
 enum class update_action : std::uint8_t {
