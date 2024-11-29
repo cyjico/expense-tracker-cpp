@@ -10,6 +10,14 @@ expense::expense(struct date date, std::string category, double amount,
     : date(date), category(std::move(category)), amount(amount),
       desc(std::move(desc)) {}
 
+bool expense::operator<(const expense &other) const {
+  return date < other.date;
+}
+
+bool expense::operator>(const expense &other) const {
+  return date > other.date;
+}
+
 std::string expense::to_string() const {
   std::ostringstream oss;
   oss << date.to_string() << "," << category << "," << amount << "," << desc
