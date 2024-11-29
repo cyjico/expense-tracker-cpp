@@ -16,10 +16,12 @@ set(INCLUDE_DIR ${CMAKE_SOURCE_DIR}/include)
 set(INCLUDE_FILES
     ${INCLUDE_DIR}/events/event_emitter.hpp
     ${INCLUDE_DIR}/events/page_event_emitter.h
+    ${INCLUDE_DIR}/pages/abstract_page.h
     ${INCLUDE_DIR}/pages/add_expense_page.h
     ${INCLUDE_DIR}/pages/home_page.h
+    ${INCLUDE_DIR}/pages/view_expense_page.h
     ${INCLUDE_DIR}/utils/utils.h
-    ${INCLUDE_DIR}/pages/abstract_page.h
+    # include/
     ${INCLUDE_DIR}/application.h
     ${INCLUDE_DIR}/date.h
     ${INCLUDE_DIR}/expense.h)
@@ -31,7 +33,9 @@ set(SRC_FILES
     ${SRC_DIR}/events/page_event_emitter.cpp
     ${SRC_DIR}/pages/add_expense_page.cpp
     ${SRC_DIR}/pages/home_page.cpp
+    ${SRC_DIR}/pages/view_expense_page.cpp
     ${SRC_DIR}/utils/utils.cpp
+    # src/
     ${SRC_DIR}/application.cpp
     ${SRC_DIR}/date.cpp
     ${SRC_DIR}/expense.cpp
