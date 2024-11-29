@@ -1,7 +1,7 @@
 #include "pages/home_page.h"
 #include "application.h"
 #include "pages/abstract_page.h"
-#include "util.h"
+#include "utils/utils.h"
 #include <iostream>
 #include <limits>
 
@@ -30,7 +30,7 @@ update_action home_page::update(application &app, std::istream &cin) {
     app.insert_or_assign_shared_datum("expense", "");
   }
 
-  if (util::clear_failed_istream(cin)) {
+  if (utils::clear_failed_istream(cin)) {
     return update_action::render_next_frame;
   }
 

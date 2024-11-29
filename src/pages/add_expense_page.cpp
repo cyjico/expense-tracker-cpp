@@ -1,7 +1,7 @@
 #include "pages/add_expense_page.h"
 #include "application.h"
 #include "pages/abstract_page.h"
-#include "util.h"
+#include "utils/utils.h"
 #include <iostream>
 #include <regex>
 #include <sstream>
@@ -38,7 +38,7 @@ void add_expense_page::render(application & /*app*/, std::ostream &cout) {
 update_action add_expense_page::update(application &app, std::istream &cin) {
   std::string inp;
   std::getline(cin, inp);
-  inp = util::trim_string(inp);
+  inp = utils::trim_string(inp);
 
   m_alert_msg = "";
 

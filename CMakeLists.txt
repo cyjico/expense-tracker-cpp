@@ -18,18 +18,18 @@ set(INCLUDE_FILES
     ${INCLUDE_DIR}/observer_pattern/subject.hpp
     ${INCLUDE_DIR}/pages/add_expense_page.h
     ${INCLUDE_DIR}/pages/home_page.h
+    ${INCLUDE_DIR}/utils/utils.h
     ${INCLUDE_DIR}/pages/abstract_page.h
     ${INCLUDE_DIR}/application.h
-    ${INCLUDE_DIR}/date.h
-    ${INCLUDE_DIR}/util.h)
+    ${INCLUDE_DIR}/date.h)
 
 include_directories(${INCLUDE_DIR})
 
 set(SRC_DIR ${CMAKE_SOURCE_DIR}/src)
 set(SRC_FILES
     ${SRC_DIR}/pages/add_expense_page.cpp ${SRC_DIR}/pages/home_page.cpp
-    ${SRC_DIR}/application.cpp ${SRC_DIR}/date.cpp ${SRC_DIR}/main.cpp
-    ${SRC_DIR}/util.cpp)
+    ${SRC_DIR}/utils/utils.cpp ${SRC_DIR}/application.cpp ${SRC_DIR}/date.cpp
+    ${SRC_DIR}/main.cpp)
 
 add_executable(${PROJECT_NAME} ${SRC_FILES})
 
