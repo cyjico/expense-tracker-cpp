@@ -24,6 +24,14 @@ bool date::is_valid() const {
   return day >= 1 && day <= max_days && month >= 1 && month <= max_months;
 }
 
+bool date::operator<(const date &other) const {
+  return year < other.year || month < other.month || day < other.day;
+}
+
+bool date::operator>(const date &other) const {
+  return year > other.year || month > other.month || day > other.day;
+}
+
 date date::from_string(const std::string &date_str) {
   date date;
 
