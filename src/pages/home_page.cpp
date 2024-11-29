@@ -4,8 +4,10 @@
 #include "expense.h"
 #include "pages/abstract_page.h"
 #include "utils/utils.h"
+#include <fstream>
 #include <iostream>
 #include <limits>
+#include <sstream>
 #include <vector>
 
 home_page::home_page() = default;
@@ -17,7 +19,36 @@ void home_page::attach_listeners(application &app) {
     }
 
     if (!evt.app->has_shared_datum("expense")) {
-      evt.app->insert_or_assign_shared_datum("expense", std::vector<expense>());
+      auto expenses = std::vector<expense>();
+
+      std::ifstream input_file("expense-tracker-cpp.expenses.txt");
+      if (input_file.is_open()) {
+        std::string line;
+        while (std::getline(input_file, line)) {
+          std::stringstream stream(line);
+
+          std::string date_str;
+          std::string category;
+          std::string amount_str;
+          std::string desc;
+          if (std::getline(stream, date_str, ',') &&
+              std::getline(stream, category, ',') &&
+              std::getline(stream, amount_str, ',')) {
+
+            expense expense;
+            expense.date = date::from_string(date_str);
+            expense.category = category;
+            expense.amount = std::stod(amount_str);
+            expense.desc = std::getline(stream, desc) ? desc : "";
+
+            expenses.push_back(expense);
+          }
+        }
+
+        input_file.close();
+      }
+
+      evt.app->insert_or_assign_shared_datum("expense", expenses);
     }
   });
 }
