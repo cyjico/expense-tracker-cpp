@@ -84,7 +84,7 @@ update_action add_expense_page::update(application &app, std::istream &cin) {
       break;
     }
 
-    m_expense.amount = std::stof(match.str());
+    m_expense.amount = std::stod(match.str());
 
     if (m_expense.amount < 0) {
       m_alert_msg = "Amount cannot be negative.\n";
