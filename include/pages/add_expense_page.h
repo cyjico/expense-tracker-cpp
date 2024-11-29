@@ -1,5 +1,5 @@
 #pragma once
-#include "date.h"
+#include "expense.h"
 #include "pages/abstract_page.h"
 #include <cstdint>
 #include <istream>
@@ -7,13 +7,6 @@
 #include <string>
 
 class add_expense_page : public abstract_page {
-  std::string m_alert_msg;
-
-  date m_date;
-  std::string m_category;
-  float m_amount;
-  std::string m_desc;
-
   enum class state : std::uint8_t {
     prompt_date,
     prompt_category,
@@ -23,6 +16,9 @@ class add_expense_page : public abstract_page {
   };
 
   state m_state = state::prompt_date;
+  std::string m_alert_msg;
+
+  expense m_expense;
 
 public:
   add_expense_page();

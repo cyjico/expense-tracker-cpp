@@ -21,7 +21,8 @@ set(INCLUDE_FILES
     ${INCLUDE_DIR}/utils/utils.h
     ${INCLUDE_DIR}/pages/abstract_page.h
     ${INCLUDE_DIR}/application.h
-    ${INCLUDE_DIR}/date.h)
+    ${INCLUDE_DIR}/date.h
+    ${INCLUDE_DIR}/expense.h)
 
 include_directories(${INCLUDE_DIR})
 
@@ -33,7 +34,8 @@ set(SRC_FILES
     ${SRC_DIR}/utils/utils.cpp
     ${SRC_DIR}/application.cpp
     ${SRC_DIR}/date.cpp
-    ${SRC_DIR}/main.cpp)  
+    ${SRC_DIR}/expense.cpp
+    ${SRC_DIR}/main.cpp)
 
 add_executable(${PROJECT_NAME} ${SRC_FILES})
 

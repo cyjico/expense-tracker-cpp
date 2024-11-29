@@ -1,6 +1,7 @@
 #include "application.h"
 #include "events/page_event_emitter.h"
 #include "pages/abstract_page.h"
+#include <any>
 #include <iostream>
 #include <memory>
 #include <stdexcept>
@@ -53,26 +54,23 @@ void application::redirect(const std::string &new_address) {
   m_onpageload.emit(evt);
 }
 
-const std::unordered_map<std::string, std::string> &application::shared_data() {
-  return m_shared_data;
+const std::string &application::cur_address() { return m_cur_address; }
+
+std::shared_ptr<const abstract_page> application::cur_page() {
+  return m_pages.at(m_cur_address);
 }
 
-const std::string &application::at_shared_datum(const std::string &key) {
-  return m_shared_data.at(key);
+const std::unordered_map<std::string, std::any> &application::shared_data() {
+  return m_shared_data;
 }
 
 bool application::has_shared_datum(const std::string &key) {
   return m_shared_data.find(key) != m_shared_data.end();
 }
 
-std::unordered_map<std::string, std::string>::const_iterator
+std::unordered_map<std::string, std::any>::const_iterator
 application::find_shared_datum(const std::string &key) {
   return m_shared_data.find(key);
-}
-
-bool application::insert_or_assign_shared_datum(const std::string &key,
-                                                std::string value) {
-  return m_shared_data.insert_or_assign(key, value).second;
 }
 
 bool application::erase_shared_datum(const std::string &key) {

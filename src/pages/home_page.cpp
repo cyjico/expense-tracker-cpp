@@ -1,15 +1,21 @@
 #include "pages/home_page.h"
 #include "application.h"
 #include "events/page_event_emitter.h"
+#include "expense.h"
 #include "pages/abstract_page.h"
 #include "utils/utils.h"
 #include <iostream>
 #include <limits>
+#include <vector>
 
 home_page::home_page(application &app) {
-  app.onpageload().add_listener([](page_event event) -> void {
-    if (!event.app->has_shared_datum("expense")) {
-      event.app->insert_or_assign_shared_datum("expense", "");
+  app.onpageload().add_listener([this](page_event evt) -> void {
+    if (evt.app->cur_page().get() != this) {
+      return;
+    }
+
+    if (!evt.app->has_shared_datum("expense")) {
+      evt.app->insert_or_assign_shared_datum("expense", std::vector<expense>());
     }
   });
 };

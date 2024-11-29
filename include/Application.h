@@ -1,6 +1,8 @@
 #pragma once
 #include "events/page_event_emitter.h"
+#include <any>
 #include <memory>
+#include <stdexcept>
 #include <string>
 #include <unordered_map>
 class abstract_page;
@@ -12,7 +14,7 @@ class application {
   page_map m_pages;
   std::string m_cur_address = "/";
 
-  std::unordered_map<std::string, std::string> m_shared_data;
+  std::unordered_map<std::string, std::any> m_shared_data;
   page_event_emitter m_onpageload;
   page_event_emitter m_onpageunload;
 
@@ -24,7 +26,10 @@ public:
   void run_indefinitely();
   void redirect(const std::string &new_address);
 
-  const std::unordered_map<std::string, std::string> &shared_data();
+  const std::string &cur_address();
+  std::shared_ptr<const abstract_page> cur_page();
+
+  const std::unordered_map<std::string, std::any> &shared_data();
 
   // --- Datum Accessor ---
 
@@ -33,15 +38,16 @@ public:
    *
    * @param key
    * @return
-   * @throw std::out_of_range If no such datum is present.
+   * @throw std::out_of_range if no such datum is present. std::runtime_error if
+   * the datum could not be casted to the requested type.
    */
-  const std::string &at_shared_datum(const std::string &key);
+  template <typename T> T &at_shared_datum(const std::string &key);
 
   // --- Datum Lookup ---
 
   bool has_shared_datum(const std::string &key);
 
-  std::unordered_map<std::string, std::string>::const_iterator
+  std::unordered_map<std::string, std::any>::const_iterator
   find_shared_datum(const std::string &key);
 
   // --- Datum Modifier ---
@@ -53,7 +59,8 @@ public:
    * @param value
    * @return If it has successfully inserted the datum.
    */
-  bool insert_or_assign_shared_datum(const std::string &key, std::string value);
+  template <typename T>
+  bool insert_or_assign_shared_datum(const std::string &key, const T &value);
 
   /**
    * @brief Erases a shared datum based on the key.
@@ -69,3 +76,20 @@ public:
   page_event_emitter &onpageload();
   page_event_emitter &onpageunload();
 };
+
+template <typename T> T &application::at_shared_datum(const std::string &key) {
+  try {
+    return std::any_cast<T &>(m_shared_data.at(key));
+  } catch (const std::bad_any_cast &e) {
+    throw std::runtime_error("Failed to cast the datum to the requested type.");
+  } catch (const std::out_of_range &e) {
+    throw std::runtime_error(R"(Datum with key ")" + key +
+                             R"(" does not exist.)");
+  }
+}
+
+template <typename T>
+bool application::insert_or_assign_shared_datum(const std::string &key,
+                                                const T &value) {
+  return m_shared_data.insert_or_assign(key, value).second;
+}

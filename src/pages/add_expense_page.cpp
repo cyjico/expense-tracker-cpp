@@ -1,13 +1,14 @@
 #include "pages/add_expense_page.h"
 #include "application.h"
+#include "expense.h"
 #include "pages/abstract_page.h"
 #include "utils/utils.h"
 #include <iostream>
 #include <regex>
-#include <sstream>
 #include <string>
+#include <vector>
 
-add_expense_page::add_expense_page() : m_date(0, 0, 0), m_amount(0) {};
+add_expense_page::add_expense_page() = default;
 
 void add_expense_page::render(application & /*app*/, std::ostream &cout) {
   cout << "\x1B[2J\x1B[1;1H";
@@ -53,11 +54,11 @@ update_action add_expense_page::update(application &app, std::istream &cin) {
       break;
     }
 
-    m_date.day = std::stoi(match[1].str());
-    m_date.month = std::stoi(match[2].str());
-    m_date.year = std::stoi(match[3].str());
+    m_expense.date.day = std::stoi(match[1].str());
+    m_expense.date.month = std::stoi(match[2].str());
+    m_expense.date.year = std::stoi(match[3].str());
 
-    if (!m_date.is_valid()) {
+    if (!m_expense.date.is_valid()) {
       m_alert_msg = "Invalid date range.\n";
       break;
     }
@@ -70,7 +71,7 @@ update_action add_expense_page::update(application &app, std::istream &cin) {
       break;
     }
 
-    m_category = inp;
+    m_expense.category = inp;
     m_state = state::prompt_amount;
     break;
   case state::prompt_amount: {
@@ -83,9 +84,9 @@ update_action add_expense_page::update(application &app, std::istream &cin) {
       break;
     }
 
-    m_amount = std::stof(match.str());
+    m_expense.amount = std::stof(match.str());
 
-    if (m_amount < 0) {
+    if (m_expense.amount < 0) {
       m_alert_msg = "Amount cannot be negative.\n";
       break;
     }
@@ -93,15 +94,12 @@ update_action add_expense_page::update(application &app, std::istream &cin) {
     m_state = state::prompt_desc;
   } break;
   case state::prompt_desc:
-    m_desc = inp;
+    m_expense.desc = inp;
     m_state = state::end;
     break;
   case state::end:
   default: {
-    std::ostringstream oss(app.at_shared_datum("expense"));
-    oss << m_date.to_string() << "," << m_category << "," << m_amount << ","
-        << m_desc << "\n";
-    app.insert_or_assign_shared_datum("expense", oss.str());
+    app.at_shared_datum<std::vector<expense>>("expense").push_back(m_expense);
 
     app.redirect("/");
   } break;
