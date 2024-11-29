@@ -18,7 +18,7 @@ void view_expense_page::render_cell(std::ostream &cout,
 }
 
 view_expense_page::view_expense_page(uint32_t table_cell_padding)
-    : m_table_cell_width(14), m_table_cell_padding(table_cell_padding) {}
+    : m_table_cell_width(15), m_table_cell_padding(table_cell_padding) {}
 
 void view_expense_page::attach_listeners(application &app) {
   app.onpageload().add_listener([this](page_event evt) -> void {
@@ -27,7 +27,7 @@ void view_expense_page::attach_listeners(application &app) {
     }
 
     if (evt.app->has_shared_datum("expense")) {
-      m_table_cell_width = 14;
+      m_table_cell_width = 15;
 
       auto expenses =
           evt.app->at_shared_datum<std::vector<struct expense>>("expense");
