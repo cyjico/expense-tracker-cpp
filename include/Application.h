@@ -1,6 +1,5 @@
 #pragma once
-#include "observer_pattern/observer.hpp"
-#include "observer_pattern/subject.hpp"
+#include "events/page_event_emitter.h"
 #include <memory>
 #include <string>
 #include <unordered_map>
@@ -9,19 +8,13 @@ class abstract_page;
 using page_map =
     std::unordered_map<std::string, std::shared_ptr<abstract_page>>;
 
-namespace application_events {
-using page_observer =
-    observer<std::string, const std::shared_ptr<abstract_page>>;
-using page_subject = subject<std::string, const std::shared_ptr<abstract_page>>;
-} // namespace application_events
-
 class application {
   page_map m_pages;
   std::string m_cur_address = "/";
 
   std::unordered_map<std::string, std::string> m_shared_data;
-  application_events::page_subject m_onpageload;
-  application_events::page_subject m_onpageunload;
+  page_event_emitter m_onpageload;
+  page_event_emitter m_onpageunload;
 
 public:
   application();
@@ -73,6 +66,6 @@ public:
 
   // --- Observer Pattern ---
 
-  application_events::page_subject &onpageload();
-  application_events::page_subject &onpageunload();
+  page_event_emitter &onpageload();
+  page_event_emitter &onpageunload();
 };

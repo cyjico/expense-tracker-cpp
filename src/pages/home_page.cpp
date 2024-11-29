@@ -1,11 +1,18 @@
 #include "pages/home_page.h"
 #include "application.h"
+#include "events/page_event_emitter.h"
 #include "pages/abstract_page.h"
 #include "utils/utils.h"
 #include <iostream>
 #include <limits>
 
-home_page::home_page() = default;
+home_page::home_page(application &app) {
+  app.onpageload().add_listener([](page_event event) -> void {
+    if (!event.app->has_shared_datum("expense")) {
+      event.app->insert_or_assign_shared_datum("expense", "");
+    }
+  });
+};
 
 void home_page::render(application & /*app*/, std::ostream &cout) {
   // \x1B      => ASCII escape character in hexadecimal
@@ -25,10 +32,6 @@ update_action home_page::update(application &app, std::istream &cin) {
   int inp = 0;
   cin >> inp;
   std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-
-  if (!app.has_shared_datum("expense")) {
-    app.insert_or_assign_shared_datum("expense", "");
-  }
 
   if (utils::clear_failed_istream(cin)) {
     return update_action::render_next_frame;
