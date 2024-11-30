@@ -27,6 +27,7 @@ void application::run_indefinitely() {
 
     switch (action) {
     case update_action::skip_render_next_frame:
+      std::cout << "\033[2K\r\033[1A\033[2K\r" << std::flush;
       break;
     case update_action::render_next_frame:
       prev_rendered_address = m_cur_address;
