@@ -18,6 +18,7 @@ set(INCLUDE_FILES
     ${INCLUDE_DIR}/events/page_event_emitter.h
     ${INCLUDE_DIR}/pages/abstract_page.h
     ${INCLUDE_DIR}/pages/add_expense_page.h
+    ${INCLUDE_DIR}/pages/generate_report_page.h
     ${INCLUDE_DIR}/pages/home_page.h
     ${INCLUDE_DIR}/pages/view_expense_page.h
     ${INCLUDE_DIR}/utils/utils.h
@@ -32,6 +33,7 @@ set(SRC_DIR ${CMAKE_SOURCE_DIR}/src)
 set(SRC_FILES
     ${SRC_DIR}/events/page_event_emitter.cpp
     ${SRC_DIR}/pages/add_expense_page.cpp
+    ${SRC_DIR}/pages/generate_report_page.cpp
     ${SRC_DIR}/pages/home_page.cpp
     ${SRC_DIR}/pages/view_expense_page.cpp
     ${SRC_DIR}/utils/utils.cpp
