@@ -56,10 +56,11 @@ add_expense_page::validate_category(const application &app,
       }
     }
 
-    std::string buffer = "Category does not exist.\n";
-    if (max_similarity > 0.6) {
-      buffer += "Did you perhaps mean \"" + closest_category + "\"?\n";
-    }
+    std::string buffer =
+        "Category \"" + inp + "\" does not exist.\n" +
+        (max_similarity > 0.6
+             ? "Did you perhaps mean \"" + closest_category + "\"?\n\n"
+             : "\n\n");
 
     return std::make_pair(buffer, "");
   }
@@ -91,7 +92,7 @@ update_action add_expense_page::update(application &app, std::ostream &cout,
                                        std::istream &cin) {
   utils::clear_screen(cout);
   cout << m_alert_msg;
-  display_prompt(cout, m_state);
+  display_prompt(app, cout, m_state);
 
   std::string inp;
   std::getline(cin, inp);
@@ -100,13 +101,26 @@ update_action add_expense_page::update(application &app, std::ostream &cout,
   return update_action::none;
 }
 
-void add_expense_page::display_prompt(std::ostream &cout, const state &state) {
+void add_expense_page::display_prompt(application &app, std::ostream &cout,
+                                      const state &state) {
   switch (state) {
   case state::prompt_date:
     cout << "Enter the date (dd/mm/yyyy): ";
     break;
   case state::prompt_category:
-    cout << "Enter the category (Food, Transportation, etc.): ";
+    cout << "The availble categories are:\n";
+
+    {
+      const auto &valid_categories =
+          app.at_shared_datum<std::unordered_set<std::string>>(
+              "valid_categories");
+
+      for (const auto &category : valid_categories) {
+        cout << category << '\n';
+      }
+    }
+
+    cout << "\nEnter the category: ";
     break;
   case state::prompt_amount:
     cout << "Enter the amount: ";
