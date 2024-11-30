@@ -10,6 +10,14 @@
 class view_expense_page
     : public abstract_page,
       public std::enable_shared_from_this<view_expense_page> {
+  enum class state : std::uint8_t {
+    show_sort_by_date,
+    show_sort_by_category,
+    show_sort_by_amount
+  };
+  state m_prev_state = state::show_sort_by_category;
+  state m_state = state::show_sort_by_date;
+
   uint32_t m_table_cell_width;
   uint32_t m_table_cell_padding;
 

@@ -8,8 +8,11 @@
 #include <cstddef>
 #include <cstdint>
 #include <iostream>
+#include <ostream>
 #include <set>
+#include <stdexcept>
 #include <string>
+#include <vector>
 
 void view_expense_page::render_cell(std::ostream &cout,
                                     const std::string &text) const {
@@ -50,7 +53,12 @@ void view_expense_page::attach_listeners(application &app) {
 }
 
 void view_expense_page::render(application &app, std::ostream &cout) {
-  cout << "\x1B[2J\x1B[1;1H";
+  if (m_prev_state == m_state) {
+    cout << "\033[2K\r\033[1A\033[2K\r" << std::flush;
+    return;
+  }
+
+  cout << "\x1B[2J\x1B[1;1H" << std::flush;
 
   render_row<std::string, std::string, std::string, std::string>(
       cout, "Date", "Category", "Amount", "Description");
@@ -58,9 +66,31 @@ void view_expense_page::render(application &app, std::ostream &cout) {
 
   auto expenses =
       app.at_shared_datum<std::multiset<struct expense>>("expenses");
+  std::vector<expense> expenses_vec(expenses.begin(), expenses.end());
+
+  switch (m_state) {
+  case state::show_sort_by_date:
+    break;
+  case state::show_sort_by_amount:
+    // std::sort requires containers that support random access iterators
+    std::sort(expenses_vec.begin(), expenses_vec.end(),
+              [](const expense &lhs, const expense &rhs) -> bool {
+                return lhs.amount < rhs.amount;
+              });
+    break;
+  case state::show_sort_by_category:
+    // std::sort requires containers that support random access iterators
+    std::sort(expenses_vec.begin(), expenses_vec.end(),
+              [](const expense &lhs, const expense &rhs) -> bool {
+                return lhs.category < rhs.category;
+              });
+    break;
+  default:
+    break;
+  }
   double total_expenses = 0;
 
-  for (const auto &expense : expenses) {
+  for (const auto &expense : expenses_vec) {
     total_expenses += expense.amount;
 
     render_cell(cout, expense.date.to_string());
@@ -75,13 +105,46 @@ void view_expense_page::render(application &app, std::ostream &cout) {
   render_cell(cout, "Total Expenses:");
   render_cell(cout, utils::double_to_string(total_expenses));
 
-  cout << "\n\nPress enter to return to the main menu.\n";
+  cout << "\n\n1. Sort by Date"
+       << (m_state == state::show_sort_by_date ? " (selected)\n" : "\n")
+       << "2. Sort by Amount"
+       << (m_state == state::show_sort_by_amount ? " (selected)\n" : "\n")
+       << "3. Sort by Category"
+       << (m_state == state::show_sort_by_category ? " (selected)\n" : "\n")
+       << "4. Exit\n";
 }
 
 update_action view_expense_page::update(application &app, std::istream &cin) {
   std::string inp;
   std::getline(cin, inp);
 
-  app.redirect("/");
+  int desired_state = 0;
+
+  try {
+    desired_state = std::stoi(inp);
+  } catch (const std::invalid_argument& e) {
+    desired_state = 0;
+  }
+
+  m_prev_state = m_state;
+  switch (desired_state) {
+  case 1:
+    m_state = state::show_sort_by_date;
+    break;
+  case 2:
+    m_state = state::show_sort_by_amount;
+    break;
+  case 3:
+    m_state = state::show_sort_by_category;
+    break;
+  case 4:
+    app.redirect("/");
+
+    m_state = state::show_sort_by_date;
+    return update_action::render_next_frame;
+  default:
+    break;
+  }
+
   return update_action::render_next_frame;
 }
