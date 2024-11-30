@@ -21,7 +21,6 @@ bool expense::operator>(const expense &other) const {
 
 std::string expense::to_string() const {
   std::ostringstream oss;
-  oss << date.to_string() << "," << category << "," << amount << "," << desc
-      << "\n";
+  oss << date.to_string() << "," << category << "," << amount << "," << desc;
   return oss.str();
 }

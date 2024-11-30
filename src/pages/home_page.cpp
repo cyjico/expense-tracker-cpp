@@ -12,6 +12,8 @@
 #include <sstream>
 #include <string>
 
+static constexpr const char *file_name = ".etkcpp_expenses.txt";
+
 home_page::home_page() = default;
 
 void home_page::attach_listeners(application &app) {
@@ -23,7 +25,7 @@ void home_page::attach_listeners(application &app) {
     if (!evt.app->has_shared_datum("expenses")) {
       auto expenses = std::multiset<expense>();
 
-      std::ifstream input_file("expense-tracker-cpp.expenses.txt");
+      std::ifstream input_file(file_name);
       if (input_file.is_open()) {
         std::string line;
         while (std::getline(input_file, line)) {
@@ -78,32 +80,38 @@ update_action home_page::update(application &app, std::istream &cin) {
     return update_action::render_next_frame;
   }
 
-  constexpr int add_expense = 1;
-  constexpr int view_expenses = 2;
-  constexpr int search_expenses = 3;
-  constexpr int generate_report = 4;
-  constexpr int save_and_exit = 5;
-
-  if (inp < add_expense || inp > save_and_exit) {
+  if (inp < 1 || inp > 5) {
     return update_action::render_next_frame;
   }
 
   switch (inp) {
-  case add_expense:
+  case 1:
     app.redirect("/add-expense");
     break;
-  case view_expenses:
+  case 2:
     app.redirect("/view-expense");
     break;
-  case search_expenses:
+  case 3:
     app.redirect("/search-expenses");
     break;
-  case generate_report:
+  case 4:
     app.redirect("/generate-report");
     break;
-  case save_and_exit:
-    app.redirect("/save-and-exit");
-    break;
+  case 5: {
+    std::ofstream out_file(file_name);
+    if (!out_file.is_open()) {
+      break;
+    }
+
+    const auto &expenses =
+        app.at_shared_datum<std::multiset<expense>>("expenses");
+    for (const auto &expense : expenses) {
+      out_file << expense.to_string() << "\n";
+    }
+
+    out_file.close();
+  }
+    return update_action::exit;
   default:
     break;
   }
