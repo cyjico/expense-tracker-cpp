@@ -95,7 +95,7 @@ update_action home_page::update(application &app, std::istream &cin) {
     app.redirect("/add-expense");
     break;
   case 2:
-    app.redirect("/view-expense");
+    app.redirect("/view-expenses");
     break;
   case 3:
     app.redirect("/search-expenses");

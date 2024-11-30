@@ -1,4 +1,4 @@
-#include "pages/view_expense_page.h"
+#include "pages/view_expenses_page.h"
 #include "application.h"
 #include "events/page_event_emitter.h"
 #include "expense.h"
@@ -14,23 +14,23 @@
 #include <string>
 #include <vector>
 
-void view_expense_page::render_cell(std::ostream &cout,
-                                    const std::string &text) const {
+void view_expenses_page::render_cell(std::ostream &cout,
+                                     const std::string &text) const {
   const auto times = m_table_cell_width - text.length() + m_table_cell_padding;
   cout << text << std::string(times, ' ');
 }
 
-void view_expense_page::render_horizontal_rule(std::ostream &cout) const {
+void view_expenses_page::render_horizontal_rule(std::ostream &cout) const {
   cout << std::string(static_cast<size_t>(
                           (m_table_cell_width + m_table_cell_padding) * 4),
                       '-')
        << "\n";
 }
 
-view_expense_page::view_expense_page(uint32_t table_cell_padding)
+view_expenses_page::view_expenses_page(uint32_t table_cell_padding)
     : m_table_cell_width(15), m_table_cell_padding(table_cell_padding) {}
 
-void view_expense_page::attach_listeners(application &app) {
+void view_expenses_page::attach_listeners(application &app) {
   app.onpageload().add_listener([this](page_event evt) -> void {
     if (evt.app->cur_page() != shared_from_this()) {
       return;
@@ -52,7 +52,7 @@ void view_expense_page::attach_listeners(application &app) {
   });
 }
 
-void view_expense_page::render(application &app, std::ostream &cout) {
+void view_expenses_page::render(application &app, std::ostream &cout) {
   if (m_prev_state == m_state) {
     cout << "\033[2K\r\033[1A\033[2K\r" << std::flush;
     return;
@@ -114,7 +114,7 @@ void view_expense_page::render(application &app, std::ostream &cout) {
        << "4. Exit\n";
 }
 
-update_action view_expense_page::update(application &app, std::istream &cin) {
+update_action view_expenses_page::update(application &app, std::istream &cin) {
   std::string inp;
   std::getline(cin, inp);
 
@@ -122,7 +122,7 @@ update_action view_expense_page::update(application &app, std::istream &cin) {
 
   try {
     desired_state = std::stoi(inp);
-  } catch (const std::invalid_argument& e) {
+  } catch (const std::invalid_argument &e) {
     desired_state = 0;
   }
 

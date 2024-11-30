@@ -20,7 +20,7 @@ set(INCLUDE_FILES
     ${INCLUDE_DIR}/pages/add_expense_page.h
     ${INCLUDE_DIR}/pages/generate_report_page.h
     ${INCLUDE_DIR}/pages/home_page.h
-    ${INCLUDE_DIR}/pages/view_expense_page.h
+    ${INCLUDE_DIR}/pages/view_expenses_page.h
     ${INCLUDE_DIR}/utils/utils.h
     # include/
     ${INCLUDE_DIR}/application.h
@@ -35,7 +35,7 @@ set(SRC_FILES
     ${SRC_DIR}/pages/add_expense_page.cpp
     ${SRC_DIR}/pages/generate_report_page.cpp
     ${SRC_DIR}/pages/home_page.cpp
-    ${SRC_DIR}/pages/view_expense_page.cpp
+    ${SRC_DIR}/pages/view_expenses_page.cpp
     ${SRC_DIR}/utils/utils.cpp
     # src/
     ${SRC_DIR}/application.cpp

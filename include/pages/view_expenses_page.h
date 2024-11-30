@@ -7,9 +7,9 @@
 #include <string>
 #include <utility>
 
-class view_expense_page
+class view_expenses_page
     : public abstract_page,
-      public std::enable_shared_from_this<view_expense_page> {
+      public std::enable_shared_from_this<view_expenses_page> {
   enum class state : std::uint8_t {
     show_sort_by_date,
     show_sort_by_category,
@@ -29,7 +29,7 @@ class view_expense_page
   void render_horizontal_rule(std::ostream &cout) const;
 
 public:
-  explicit view_expense_page(uint32_t table_cell_padding);
+  explicit view_expenses_page(uint32_t table_cell_padding);
 
   void attach_listeners(application &app);
   void render(application &app, std::ostream &cout) override;
@@ -37,8 +37,8 @@ public:
 };
 
 template <typename... Args>
-void view_expense_page::render_row(std::ostream &cout,
-                                   const Args &&...args) const {
+void view_expenses_page::render_row(std::ostream &cout,
+                                    const Args &&...args) const {
   static_assert((std::is_same_v<Args, std::string> && ...),
                 "All arguments must be of type std::string");
 
