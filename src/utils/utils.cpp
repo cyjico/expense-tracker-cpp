@@ -7,16 +7,22 @@
 #include <string>
 #include <vector>
 
-bool utils::clear_failed_istream(std::istream &cin) {
+bool utils::try_flush_failed_istream(std::istream &cin) {
   if (cin.fail()) {
-    // Clear error flag
     cin.clear();
-    // Skip to the next newline
     cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     return true;
   }
 
   return false;
+}
+
+void utils::clear_screen(std::ostream &cout) {
+  // For more info, see https://en.wikipedia.org/wiki/ANSI_escape_code
+  // \x1B      => ASCII escape character in hexadecimal
+  // \x1B[2J   => Clear entire screen (J) from top to bottom (2)
+  // \x1B[1;1H => Position cursor at 1st row (1) and 1st column (1H)
+  cout << "\x1B[2J\x1B[1;1H" << std::flush;
 }
 
 std::string utils::trim_string(const std::string &str) {

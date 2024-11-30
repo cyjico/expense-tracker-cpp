@@ -93,7 +93,7 @@ void view_expenses_page::attach_listeners(application &app) {
 
 update_action view_expenses_page::update(application &app, std::ostream &cout,
                                          std::istream &cin) {
-  cout << "\x1B[2J\x1B[1;1H" << std::flush;
+  utils::clear_screen(cout);
 
   // Render table
   render_row<std::string, std::string, std::string, std::string>(

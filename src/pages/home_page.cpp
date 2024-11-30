@@ -66,11 +66,7 @@ void home_page::attach_listeners(application &app) {
 
 update_action home_page::update(application &app, std::ostream &cout,
                                 std::istream &cin) {
-  // \x1B      => ASCII escape character in hexadecimal
-  // \x1B[2J   => Clear entire screen (J) from top to bottom (2)
-  // \x1B[1;1H => Position cursor at 1st row (1) and 1st column (1H)
-  cout << "\x1B[2J\x1B[1;1H" << std::flush;
-  // For more info, see https://en.wikipedia.org/wiki/ANSI_escape_code
+  utils::clear_screen(cout);
 
   cout << "1. Add Expense\n"
           "2. View Expenses\n"
@@ -82,7 +78,7 @@ update_action home_page::update(application &app, std::ostream &cout,
   cin >> inp;
   std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
-  if (utils::clear_failed_istream(cin)) {
+  if (utils::try_flush_failed_istream(cin)) {
     return update_action::none;
   }
 

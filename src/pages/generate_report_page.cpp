@@ -17,7 +17,7 @@ generate_report_page::generate_report_page() = default;
 
 update_action generate_report_page::update(application &app, std::ostream &cout,
                                            std::istream &cin) {
-  cout << "\x1B[2J\x1B[1;1H" << std::flush;
+  utils::clear_screen(cout);
   cout << m_alert_msg;
 
   switch (m_state) {
