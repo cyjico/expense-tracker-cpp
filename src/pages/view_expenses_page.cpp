@@ -53,7 +53,7 @@ void view_expenses_page::render_horizontal_rule(std::ostream &cout) const {
   cout << std::string(static_cast<size_t>(
                           (m_table_cell_width + m_table_cell_padding) * 4),
                       '-')
-       << "\n";
+       << '\n';
 }
 
 view_expenses_page::view_expenses_page(uint32_t table_cell_padding)
@@ -109,7 +109,7 @@ update_action view_expenses_page::update(application &app, std::ostream &cout,
     render_cell(cout, utils::double_to_string(expense.amount));
     render_cell(cout, expense.desc);
 
-    cout << "\n";
+    cout << '\n';
   }
 
   render_horizontal_rule(cout);

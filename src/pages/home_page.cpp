@@ -108,7 +108,7 @@ update_action home_page::update(application &app, std::ostream &cout,
     const auto &expenses =
         app.at_shared_datum<std::multiset<expense>>("expenses");
     for (const auto &expense : expenses) {
-      out_file << expense.to_string() << "\n";
+      out_file << expense.to_string() << '\n';
     }
 
     out_file.close();

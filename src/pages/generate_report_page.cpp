@@ -48,7 +48,7 @@ update_action generate_report_page::update(application &app, std::ostream &cout,
     cout << "Monthly Report (" << date::get_month_name(m_date.month) << " "
          << m_date.year << ")\n"
          << "---------------------------------"
-         << "\nTotal Expenses: " << total_amount << "\n"
+         << "\nTotal Expenses: " << total_amount << '\n'
          << std::fixed << std::setprecision(2);
 
     for (const auto &cat_amount : cat_amounts) {

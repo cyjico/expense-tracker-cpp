@@ -47,5 +47,5 @@ void view_expenses_page::render_row(std::ostream &cout,
                 "All arguments must be of type std::string");
 
   (render_cell(cout, std::forward<const Args>(args)), ...);
-  cout << "\n";
+  cout << '\n';
 }
