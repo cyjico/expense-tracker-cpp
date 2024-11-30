@@ -49,9 +49,9 @@ void application::redirect(const std::string &new_address) {
   m_onpageload.emit(evt);
 }
 
-const std::string &application::cur_address() { return m_cur_address; }
+const std::string &application::cur_address() const { return m_cur_address; }
 
-std::shared_ptr<const abstract_page> application::cur_page() {
+std::shared_ptr<const abstract_page> application::cur_page() const {
   return m_pages.at(m_cur_address);
 }
 
@@ -59,7 +59,7 @@ const std::unordered_map<std::string, std::any> &application::shared_data() {
   return m_shared_data;
 }
 
-bool application::has_shared_datum(const std::string &key) {
+bool application::has_shared_datum(const std::string &key) const {
   return m_shared_data.find(key) != m_shared_data.end();
 }
 

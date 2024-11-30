@@ -26,8 +26,8 @@ public:
   void run_indefinitely();
   void redirect(const std::string &new_address);
 
-  const std::string &cur_address();
-  std::shared_ptr<const abstract_page> cur_page();
+  const std::string &cur_address() const;
+  std::shared_ptr<const abstract_page> cur_page() const;
 
   const std::unordered_map<std::string, std::any> &shared_data();
 
@@ -42,10 +42,11 @@ public:
    * the datum could not be casted to the requested type.
    */
   template <typename T> T &at_shared_datum(const std::string &key);
+  template <typename T> const T &at_shared_datum(const std::string &key) const;
 
   // --- Datum Lookup ---
 
-  bool has_shared_datum(const std::string &key);
+  bool has_shared_datum(const std::string &key) const;
 
   std::unordered_map<std::string, std::any>::const_iterator
   find_shared_datum(const std::string &key);
@@ -80,6 +81,18 @@ public:
 template <typename T> T &application::at_shared_datum(const std::string &key) {
   try {
     return std::any_cast<T &>(m_shared_data.at(key));
+  } catch (const std::bad_any_cast &e) {
+    throw std::runtime_error("Failed to cast the datum to the requested type.");
+  } catch (const std::out_of_range &e) {
+    throw std::runtime_error(R"(Datum with key ")" + key +
+                             R"(" does not exist.)");
+  }
+}
+
+template <typename T>
+const T &application::at_shared_datum(const std::string &key) const {
+  try {
+    return std::any_cast<const T &>(m_shared_data.at(key));
   } catch (const std::bad_any_cast &e) {
     throw std::runtime_error("Failed to cast the datum to the requested type.");
   } catch (const std::out_of_range &e) {
