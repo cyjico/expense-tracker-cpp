@@ -22,6 +22,6 @@ class add_expense_page : public abstract_page {
 public:
   add_expense_page();
 
-  void render(application &app, std::ostream &cout) override;
-  update_action update(application &app, std::istream &cin) override;
+  update_action update(application &app, std::ostream &cout,
+                       std::istream &cin) override;
 };

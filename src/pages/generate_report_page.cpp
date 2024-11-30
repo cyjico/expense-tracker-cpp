@@ -15,8 +15,9 @@
 
 generate_report_page::generate_report_page() = default;
 
-void generate_report_page::render(application &app, std::ostream &cout) {
-  cout << "\x1B[2J\x1B[1;1H";
+update_action generate_report_page::update(application &app, std::ostream &cout,
+                                           std::istream &cin) {
+  cout << "\x1B[2J\x1B[1;1H" << std::flush;
   cout << m_alert_msg;
 
   switch (m_state) {
@@ -58,10 +59,7 @@ void generate_report_page::render(application &app, std::ostream &cout) {
     cout << std::defaultfloat << "\nPress enter to return to the main menu.";
   } break;
   }
-}
 
-update_action generate_report_page::update(application &app,
-                                           std::istream &cin) {
   std::string inp;
   std::getline(cin, inp);
   inp = utils::trim_string(inp);
@@ -95,5 +93,6 @@ update_action generate_report_page::update(application &app,
     m_state = state::prompt_date;
     break;
   }
-  return update_action::render_next_frame;
+
+  return update_action::none;
 }

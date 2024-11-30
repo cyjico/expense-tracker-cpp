@@ -11,6 +11,6 @@ public:
   home_page();
 
   void attach_listeners(application &app);
-  void render(application &app, std::ostream &cout) override;
-  update_action update(application &app, std::istream &cin) override;
+  update_action update(application &app, std::ostream &cout,
+                       std::istream &cin) override;
 };

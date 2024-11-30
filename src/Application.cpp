@@ -19,25 +19,19 @@ void application::run_indefinitely() {
     m_onpageload.emit(evt);
   }
 
-  update_action action = update_action::render_next_frame;
-  std::string prev_rendered_address;
+  update_action action = update_action::none;
 
   while (true) {
     auto page = m_pages.at(m_cur_address);
 
     switch (action) {
-    case update_action::skip_render_next_frame:
-      std::cout << "\033[2K\r\033[1A\033[2K\r" << std::flush;
+    case update_action::none:
       break;
-    case update_action::render_next_frame:
-      prev_rendered_address = m_cur_address;
-      page->render(*this, std::cout);
-      break;
-    case update_action::exit:
+    case update_action::exit_app:
       return;
     }
 
-    action = page->update(*this, std::cin);
+    action = page->update(*this, std::cout, std::cin);
   }
 }
 

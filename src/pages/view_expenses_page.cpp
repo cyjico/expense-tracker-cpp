@@ -91,7 +91,8 @@ void view_expenses_page::attach_listeners(application &app) {
   });
 }
 
-void view_expenses_page::render(application & /*app*/, std::ostream &cout) {
+update_action view_expenses_page::update(application &app, std::ostream &cout,
+                                         std::istream &cin) {
   cout << "\x1B[2J\x1B[1;1H" << std::flush;
 
   // Render table
@@ -130,9 +131,7 @@ void view_expenses_page::render(application & /*app*/, std::ostream &cout) {
   }
 
   cout << item_number << ". Exit\n";
-}
 
-update_action view_expenses_page::update(application &app, std::istream &cin) {
   std::string inp;
   std::getline(cin, inp);
 
@@ -140,11 +139,11 @@ update_action view_expenses_page::update(application &app, std::istream &cin) {
   try {
     desired_state = std::stoi(inp);
   } catch (const std::exception &) {
-    return update_action::render_next_frame;
+    return update_action::none;
   }
 
   if (desired_state < 0 || desired_state > 4 || m_state == m_prev_state) {
-    return update_action::skip_render_next_frame;
+    return update_action::none;
   }
 
   m_prev_state = m_state;
@@ -166,5 +165,5 @@ update_action view_expenses_page::update(application &app, std::istream &cin) {
     break;
   }
 
-  return update_action::render_next_frame;
+  return update_action::none;
 }

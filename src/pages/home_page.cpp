@@ -8,6 +8,7 @@
 #include <fstream>
 #include <iostream>
 #include <limits>
+#include <ostream>
 #include <set>
 #include <sstream>
 #include <string>
@@ -63,11 +64,12 @@ void home_page::attach_listeners(application &app) {
   });
 }
 
-void home_page::render(application & /*app*/, std::ostream &cout) {
+update_action home_page::update(application &app, std::ostream &cout,
+                                std::istream &cin) {
   // \x1B      => ASCII escape character in hexadecimal
   // \x1B[2J   => Clear entire screen (J) from top to bottom (2)
   // \x1B[1;1H => Position cursor at 1st row (1) and 1st column (1H)
-  cout << "\x1B[2J\x1B[1;1H";
+  cout << "\x1B[2J\x1B[1;1H" << std::flush;
   // For more info, see https://en.wikipedia.org/wiki/ANSI_escape_code
 
   cout << "1. Add Expense\n"
@@ -75,19 +77,17 @@ void home_page::render(application & /*app*/, std::ostream &cout) {
           "3. Search Expenses\n"
           "4. Generate Monthly Report\n"
           "5. Save and Exit\n";
-}
 
-update_action home_page::update(application &app, std::istream &cin) {
   int inp = 0;
   cin >> inp;
   std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
   if (utils::clear_failed_istream(cin)) {
-    return update_action::render_next_frame;
+    return update_action::none;
   }
 
   if (inp < 1 || inp > 5) {
-    return update_action::render_next_frame;
+    return update_action::none;
   }
 
   switch (inp) {
@@ -117,10 +117,10 @@ update_action home_page::update(application &app, std::istream &cin) {
 
     out_file.close();
   }
-    return update_action::exit;
+    return update_action::exit_app;
   default:
     break;
   }
 
-  return update_action::render_next_frame;
+  return update_action::none;
 }
