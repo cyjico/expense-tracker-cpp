@@ -5,14 +5,43 @@
 #include "pages/abstract_page.h"
 #include "utils/utils.h"
 #include <algorithm>
+#include <array>
 #include <cstddef>
 #include <cstdint>
+#include <exception>
 #include <iostream>
 #include <ostream>
 #include <set>
 #include <stdexcept>
 #include <string>
+#include <utility>
 #include <vector>
+
+void view_expenses_page::sort_rows(const state &state,
+                                   std::vector<expense> &table_rows) {
+  /**
+   * Why std::vector?
+   * std::sort requires containers that support random access iterators
+   */
+  switch (state) {
+  case state::show_sort_by_date:
+    break;
+  case state::show_sort_by_amount:
+    std::sort(table_rows.begin(), table_rows.end(),
+              [](const expense &lhs, const expense &rhs) -> bool {
+                return lhs.amount < rhs.amount;
+              });
+    break;
+  case state::show_sort_by_category:
+    std::sort(table_rows.begin(), table_rows.end(),
+              [](const expense &lhs, const expense &rhs) -> bool {
+                return lhs.category < rhs.category;
+              });
+    break;
+  case state::end:
+    throw std::runtime_error("Cannot sort table_rows when state is state::end");
+  }
+}
 
 void view_expenses_page::render_cell(std::ostream &cout,
                                      const std::string &text) const {
@@ -28,7 +57,7 @@ void view_expenses_page::render_horizontal_rule(std::ostream &cout) const {
 }
 
 view_expenses_page::view_expenses_page(uint32_t table_cell_padding)
-    : m_table_cell_width(15), m_table_cell_padding(table_cell_padding) {}
+    : m_table_cell_padding(table_cell_padding) {}
 
 void view_expenses_page::attach_listeners(application &app) {
   app.onpageload().add_listener([this](page_event evt) -> void {
@@ -36,61 +65,42 @@ void view_expenses_page::attach_listeners(application &app) {
       return;
     }
 
-    if (evt.app->has_shared_datum("expenses")) {
-      m_table_cell_width = 15;
+    /**
+     * Why no checking?
+     * We expect the app to always arrive FIRST at `home_page`.
+     * Then, as it follows, we SHOULD throw an error if the page was
+     * unexpectedly loaded before `home_page`.
+     */
+    const std::multiset<expense> &expenses =
+        evt.app->at_shared_datum<std::multiset<struct expense>>("expenses");
 
-      auto expenses =
-          evt.app->at_shared_datum<std::multiset<struct expense>>("expenses");
-
-      for (const auto &expense : expenses) {
-        m_table_cell_width = std::max<uint64_t>(
-            {expense.date.to_string().length(), expense.category.length(),
-             utils::double_to_string(expense.amount).length(),
-             expense.desc.length(), static_cast<uint64_t>(m_table_cell_width)});
-      }
+    // Retrieve maximum cell width
+    m_table_cell_width = 15;
+    for (const auto &expense : expenses) {
+      m_table_cell_width = std::max<uint64_t>(
+          {static_cast<uint64_t>(m_table_cell_width),
+           expense.date.to_string().length(), expense.category.length(),
+           utils::double_to_string(expense.amount).length(),
+           expense.desc.length()});
     }
+
+    std::swap(m_prev_state, m_state);
+
+    m_table_rows = std::vector<expense>(expenses.begin(), expenses.end());
+    sort_rows(m_state, m_table_rows);
   });
 }
 
-void view_expenses_page::render(application &app, std::ostream &cout) {
-  if (m_prev_state == m_state) {
-    cout << "\033[2K\r\033[1A\033[2K\r" << std::flush;
-    return;
-  }
-
+void view_expenses_page::render(application & /*app*/, std::ostream &cout) {
   cout << "\x1B[2J\x1B[1;1H" << std::flush;
 
+  // Render table
   render_row<std::string, std::string, std::string, std::string>(
       cout, "Date", "Category", "Amount", "Description");
   render_horizontal_rule(cout);
 
-  auto expenses =
-      app.at_shared_datum<std::multiset<struct expense>>("expenses");
-  std::vector<expense> expenses_vec(expenses.begin(), expenses.end());
-
-  switch (m_state) {
-  case state::show_sort_by_date:
-    break;
-  case state::show_sort_by_amount:
-    // std::sort requires containers that support random access iterators
-    std::sort(expenses_vec.begin(), expenses_vec.end(),
-              [](const expense &lhs, const expense &rhs) -> bool {
-                return lhs.amount < rhs.amount;
-              });
-    break;
-  case state::show_sort_by_category:
-    // std::sort requires containers that support random access iterators
-    std::sort(expenses_vec.begin(), expenses_vec.end(),
-              [](const expense &lhs, const expense &rhs) -> bool {
-                return lhs.category < rhs.category;
-              });
-    break;
-  default:
-    break;
-  }
   double total_expenses = 0;
-
-  for (const auto &expense : expenses_vec) {
+  for (const auto &expense : m_table_rows) {
     total_expenses += expense.amount;
 
     render_cell(cout, expense.date.to_string());
@@ -105,13 +115,21 @@ void view_expenses_page::render(application &app, std::ostream &cout) {
   render_cell(cout, "Total Expenses:");
   render_cell(cout, utils::double_to_string(total_expenses));
 
-  cout << "\n\n1. Sort by Date"
-       << (m_state == state::show_sort_by_date ? " (selected)\n" : "\n")
-       << "2. Sort by Amount"
-       << (m_state == state::show_sort_by_amount ? " (selected)\n" : "\n")
-       << "3. Sort by Category"
-       << (m_state == state::show_sort_by_category ? " (selected)\n" : "\n")
-       << "4. Exit\n";
+  // Render sorting options and exit option
+  cout << "\n\n";
+
+  constexpr std::array<std::pair<state, const char *>, 3> sort_options = {
+      {{state::show_sort_by_date, "Sort by Date"},
+       {state::show_sort_by_category, "Sort by Category"},
+       {state::show_sort_by_amount, "Sort by Amount"}}};
+
+  size_t item_number = 1;
+  for (const auto &[option_state, label] : sort_options) {
+    cout << item_number++ << ". " << label
+         << (m_state == option_state ? " (selected)\n" : "\n");
+  }
+
+  cout << item_number << ". Exit\n";
 }
 
 update_action view_expenses_page::update(application &app, std::istream &cin) {
@@ -119,30 +137,32 @@ update_action view_expenses_page::update(application &app, std::istream &cin) {
   std::getline(cin, inp);
 
   int desired_state = 0;
-
   try {
     desired_state = std::stoi(inp);
-  } catch (const std::invalid_argument &e) {
-    desired_state = 0;
+  } catch (const std::exception &) {
+    return update_action::render_next_frame;
+  }
+
+  if (desired_state < 0 || desired_state > 4 || m_state == m_prev_state) {
+    return update_action::skip_render_next_frame;
   }
 
   m_prev_state = m_state;
-  switch (desired_state) {
-  case 1:
-    m_state = state::show_sort_by_date;
-    break;
-  case 2:
-    m_state = state::show_sort_by_amount;
-    break;
-  case 3:
-    m_state = state::show_sort_by_category;
-    break;
-  case 4:
-    app.redirect("/");
+  m_state = static_cast<state>(desired_state);
 
-    m_state = state::show_sort_by_date;
-    return update_action::render_next_frame;
-  default:
+  const std::multiset<expense> &expenses =
+      app.at_shared_datum<std::multiset<expense>>("expenses");
+
+  m_table_rows = std::vector<expense>(expenses.begin(), expenses.end());
+
+  switch (m_state) {
+  case state::show_sort_by_date:
+  case state::show_sort_by_amount:
+  case state::show_sort_by_category:
+    sort_rows(m_state, m_table_rows);
+    break;
+  case state::end:
+    app.redirect("/");
     break;
   }
 

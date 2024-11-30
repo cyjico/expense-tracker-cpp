@@ -4,9 +4,9 @@
 class application;
 
 enum class update_action : std::uint8_t {
-  skip_render_next_frame,
-  render_next_frame,
-  exit,
+  skip_render_next_frame = 0b0,
+  render_next_frame = 0b1,
+  exit = 0b10,
 };
 
 // NOLINTBEGIN(cppcoreguidelines-special-member-functions)
