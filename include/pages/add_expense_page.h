@@ -36,8 +36,8 @@ public:
   update_action update(application &app, std::ostream &cout,
                        std::istream &cin) override;
 
-  static void display_prompt(application &app, std::ostream &cout,
+  std::string handle_input(application &app, const std::string &inp);
+
+  static void display_prompt(const application &app, std::ostream &cout,
                              const state &state);
-  std::string handle_input(application &app, const std::string &inp,
-                           expense &expense);
 };

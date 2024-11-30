@@ -56,7 +56,7 @@ add_expense_page::validate_category(const application &app,
       }
     }
 
-    std::string buffer =
+    const std::string buffer =
         "Category \"" + inp + "\" does not exist.\n" +
         (max_similarity > 0.6
              ? "Did you perhaps mean \"" + closest_category + "\"?\n\n"
@@ -96,13 +96,61 @@ update_action add_expense_page::update(application &app, std::ostream &cout,
 
   std::string inp;
   std::getline(cin, inp);
-  m_alert_msg = handle_input(app, utils::trim_string(inp), m_expense);
+  m_alert_msg = handle_input(app, utils::trim_string(inp));
 
   return update_action::none;
 }
 
-void add_expense_page::display_prompt(application &app, std::ostream &cout,
-                                      const state &state) {
+std::string add_expense_page::handle_input(application &app,
+                                           const std::string &inp) {
+  switch (m_state) {
+  case state::prompt_date: {
+    const std::pair pair = validate_date(inp);
+    if (!pair.first.empty()) {
+      return pair.first;
+    }
+
+    m_expense.date = pair.second;
+    m_state = state::prompt_category;
+  } break;
+  case state::prompt_category: {
+    const std::pair pair = validate_category(app, inp);
+    if (!pair.first.empty()) {
+      return pair.first;
+    }
+
+    m_expense.category = pair.second;
+    m_state = state::prompt_amount;
+  } break;
+  case state::prompt_amount: {
+    const std::pair pair = validate_amount(inp);
+    if (!pair.first.empty()) {
+      return pair.first;
+    }
+
+    m_expense.amount = pair.second;
+    m_state = state::prompt_desc;
+  } break;
+  case state::prompt_desc:
+    m_expense.desc = inp;
+    app.at_shared_datum<std::multiset<struct expense>>("expenses")
+        .insert(m_expense);
+
+    m_state = state::end;
+    break;
+  case state::end:
+  default:
+    app.redirect("/");
+
+    m_state = state::prompt_date;
+    break;
+  }
+
+  return "";
+}
+
+void add_expense_page::display_prompt(const application &app,
+                                      std::ostream &cout, const state &state) {
   switch (state) {
   case state::prompt_date:
     cout << "Enter the date (dd/mm/yyyy): ";
@@ -134,53 +182,4 @@ void add_expense_page::display_prompt(application &app, std::ostream &cout,
             "menu.\n";
     break;
   }
-}
-
-std::string add_expense_page::handle_input(application &app,
-                                           const std::string &inp,
-                                           expense &expense) {
-  switch (m_state) {
-  case state::prompt_date: {
-    const std::pair pair = validate_date(inp);
-    if (!pair.first.empty()) {
-      return pair.first;
-    }
-
-    m_expense.date = pair.second;
-    m_state = state::prompt_category;
-  } break;
-  case state::prompt_category: {
-    const std::pair pair = validate_category(app, inp);
-    if (!pair.first.empty()) {
-      return pair.first;
-    }
-
-    expense.category = pair.second;
-    m_state = state::prompt_amount;
-  } break;
-  case state::prompt_amount: {
-    const std::pair pair = validate_amount(inp);
-    if (!pair.first.empty()) {
-      return pair.first;
-    }
-
-    expense.amount = pair.second;
-    m_state = state::prompt_desc;
-  } break;
-  case state::prompt_desc:
-    expense.desc = inp;
-    app.at_shared_datum<std::multiset<struct expense>>("expenses")
-        .insert(expense);
-
-    m_state = state::end;
-    break;
-  case state::end:
-  default:
-    app.redirect("/");
-
-    m_state = state::prompt_date;
-    break;
-  }
-
-  return "";
 }
