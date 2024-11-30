@@ -1,4 +1,5 @@
 #include "expense.h"
+#include "date.h"
 #include <sstream>
 #include <string>
 #include <utility>

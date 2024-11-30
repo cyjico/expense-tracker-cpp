@@ -1,5 +1,6 @@
 #include "pages/home_page.h"
 #include "application.h"
+#include "date.h"
 #include "events/page_event_emitter.h"
 #include "expense.h"
 #include "pages/abstract_page.h"
@@ -7,8 +8,9 @@
 #include <fstream>
 #include <iostream>
 #include <limits>
-#include <sstream>
 #include <set>
+#include <sstream>
+#include <string>
 
 home_page::home_page() = default;
 
