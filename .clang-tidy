@@ -6,6 +6,7 @@
 # cppcoreguidelines-avoid-magic-numbers,
 # readability-magic-numbers,
 # readability-math-missing-parentheses: too aggressive, attribute is situationally useful
+# boost-*: standard library only.
 Checks: "*,\
   -google-readability-todo,\
   -altera-*,\
@@ -19,7 +20,8 @@ Checks: "*,\
   -modernize-use-trailing-return-type,\
   -cppcoreguidelines-avoid-magic-numbers,\
   -readability-magic-numbers,\
-  -readability-math-missing-parentheses"
+  -readability-math-missing-parentheses,\
+  -boost-*"
 WarningsAsErrors: ""
 FormatStyle: "file"
 CheckOptions:
