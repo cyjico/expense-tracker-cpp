@@ -8,7 +8,7 @@
 #include <iostream>
 #include <limits>
 #include <sstream>
-#include <vector>
+#include <set>
 
 home_page::home_page() = default;
 
@@ -18,8 +18,8 @@ void home_page::attach_listeners(application &app) {
       return;
     }
 
-    if (!evt.app->has_shared_datum("expense")) {
-      auto expenses = std::vector<expense>();
+    if (!evt.app->has_shared_datum("expenses")) {
+      auto expenses = std::multiset<expense>();
 
       std::ifstream input_file("expense-tracker-cpp.expenses.txt");
       if (input_file.is_open()) {
@@ -41,14 +41,14 @@ void home_page::attach_listeners(application &app) {
             expense.amount = std::stod(amount_str);
             expense.desc = std::getline(stream, desc) ? desc : "";
 
-            expenses.push_back(expense);
+            expenses.insert(expense);
           }
         }
 
         input_file.close();
       }
 
-      evt.app->insert_or_assign_shared_datum("expense", expenses);
+      evt.app->insert_or_assign_shared_datum("expenses", expenses);
     }
   });
 }

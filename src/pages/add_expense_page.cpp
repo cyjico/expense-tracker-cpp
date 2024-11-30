@@ -5,8 +5,8 @@
 #include "utils/utils.h"
 #include <iostream>
 #include <regex>
+#include <set>
 #include <string>
-#include <vector>
 
 add_expense_page::add_expense_page() = default;
 
@@ -94,7 +94,7 @@ update_action add_expense_page::update(application &app, std::istream &cin) {
   } break;
   case state::prompt_desc:
     m_expense.desc = inp;
-    app.at_shared_datum<std::vector<expense>>("expense").push_back(m_expense);
+    app.at_shared_datum<std::multiset<expense>>("expenses").insert(m_expense);
 
     m_state = state::end;
     break;

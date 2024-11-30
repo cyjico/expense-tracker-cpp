@@ -8,8 +8,8 @@
 #include <cstddef>
 #include <cstdint>
 #include <iostream>
+#include <set>
 #include <string>
-#include <vector>
 
 void view_expense_page::render_cell(std::ostream &cout,
                                     const std::string &text) const {
@@ -33,11 +33,12 @@ void view_expense_page::attach_listeners(application &app) {
       return;
     }
 
-    if (evt.app->has_shared_datum("expense")) {
+    if (evt.app->has_shared_datum("expenses")) {
       m_table_cell_width = 15;
 
       auto expenses =
-          evt.app->at_shared_datum<std::vector<struct expense>>("expense");
+          evt.app->at_shared_datum<std::multiset<struct expense>>("expenses");
+
       for (const auto &expense : expenses) {
         m_table_cell_width = std::max<uint64_t>(
             {expense.date.to_string().length(), expense.category.length(),
@@ -55,7 +56,8 @@ void view_expense_page::render(application &app, std::ostream &cout) {
       cout, "Date", "Category", "Amount", "Description");
   render_horizontal_rule(cout);
 
-  auto expenses = app.at_shared_datum<std::vector<struct expense>>("expense");
+  auto expenses =
+      app.at_shared_datum<std::multiset<struct expense>>("expenses");
   double total_expenses = 0;
   for (const auto &expense : expenses) {
     total_expenses += expense.amount;
