@@ -2,6 +2,9 @@
 #include "date.h"
 #include <string>
 
+/**
+ * @brief Data representation of an expense.
+ */
 struct expense {
   date date;
   std::string category;

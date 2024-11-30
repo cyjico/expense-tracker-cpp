@@ -19,7 +19,7 @@
 
 void view_expenses_page::sort_rows(const state &state,
                                    std::vector<expense> &table_rows) {
-  /**
+  /*
    * Why std::vector?
    * std::sort requires containers that support random access iterators
    */
@@ -49,9 +49,10 @@ void view_expenses_page::render_cell(std::ostream &cout,
   cout << text << std::string(times, ' ');
 }
 
-void view_expenses_page::render_horizontal_rule(std::ostream &cout) const {
+void view_expenses_page::render_horizontal_rule(std::ostream &cout,
+                                                uint64_t cells) const {
   cout << std::string(static_cast<size_t>(
-                          (m_table_cell_width + m_table_cell_padding) * 4),
+                          (m_table_cell_width + m_table_cell_padding) * cells),
                       '-')
        << '\n';
 }
@@ -65,7 +66,7 @@ void view_expenses_page::attach_listeners(application &app) {
       return;
     }
 
-    /**
+    /*
      * Why no checking?
      * We expect the app to always arrive FIRST at `home_page`.
      * Then, as it follows, we SHOULD throw an error if the page was

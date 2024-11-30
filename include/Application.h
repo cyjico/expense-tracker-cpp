@@ -55,7 +55,9 @@ public:
 
   /**
    * @brief Attempts to insert a datum.
+   *
    * Function initially tries to insert but, if it fails, will assign instead.
+   *
    * @param key
    * @param value
    * @return If it has successfully inserted the datum.

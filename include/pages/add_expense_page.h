@@ -20,6 +20,9 @@ class add_expense_page : public abstract_page {
   state m_state = state::prompt_date;
   std::string m_alert_msg;
 
+  /**
+   * @brief Expense to be added.
+   */
   expense m_expense;
 
   static std::pair<std::string, date> validate_date(const std::string &inp);

@@ -3,9 +3,28 @@
 #include <stdexcept>
 #include <string>
 
+/**
+ * @brief Data representation of a date.
+ */
 struct date {
+  /**
+   * @brief A day, can be beyond 31 or 0.
+   *
+   * `uint8_t` was chosen because a day can only reach up to 31 which is 5 bits,
+   * nearest being 8 bits.
+   */
   uint8_t day;
+  /**
+   * @brief A month, can be beyond 12 or 0.
+   *
+   * `uint8_t` was chosen for ease of use.
+   */
   uint8_t month;
+  /**
+   * @brief A year, can be 0.
+   *
+   * `uint16_t` was chosen because a year is usually repsented as "yyyy".
+   */
   uint16_t year;
 
   date();
@@ -36,6 +55,10 @@ struct date {
 };
 
 constexpr const char *date::get_month_name(uint8_t month) {
+  // Why implement here? Why not in date.cpp?
+  // Simply because constexpr member functions must be availble at compile-time
+  // to be evaluated.
+
   switch (month) {
   case 1:
     return "January";

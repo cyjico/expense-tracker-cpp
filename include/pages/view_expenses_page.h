@@ -27,10 +27,32 @@ class view_expenses_page
 
   static void sort_rows(const state &state, std::vector<expense> &table_rows);
 
+  /**
+   * @brief Render a cell unto `cout` with proper spacing and padding.
+   *
+   * @param cout
+   * @param text
+   */
   void render_cell(std::ostream &cout, const std::string &text) const;
+  /**
+   * @brief Render a whole row of cells.
+   *
+   * @tparam Args
+   * @param cout
+   * @param args
+   */
   template <typename... Args>
   void render_row(std::ostream &cout, const Args &&...args) const;
-  void render_horizontal_rule(std::ostream &cout) const;
+  /**
+   * @brief Render a horizontal row `cells` cells long.
+   *
+   * Generally, you shouldn't pass in an argument into cells as there is an
+   * (expected) fixed number of columns.
+   *
+   * @param cout
+   * @param cells Number of cells the horizontal row occupies.
+   */
+  void render_horizontal_rule(std::ostream &cout, uint64_t cells = 4) const;
 
 public:
   explicit view_expenses_page(uint32_t table_cell_padding);

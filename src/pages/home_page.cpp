@@ -25,6 +25,7 @@ void home_page::attach_listeners(application &app) {
     }
 
     if (!evt.app->has_shared_datum("expenses")) {
+      // Initialize the expenses and valid_categories in shared_data
       auto expenses = std::multiset<expense>();
       auto valid_categories = std::unordered_set<std::string>(
           {"Food", "Transportation", "Rent", "Miscellaneous"});

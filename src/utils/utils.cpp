@@ -111,7 +111,7 @@ double utils::jaro_winkler(const std::string &lhs, const std::string &rhs) {
        (matches - transpositions) / static_cast<double>(matches)) /
       3.0;
 
-  // Winkler
+  // Winkler (bias in prefix similarity)
   constexpr double winkler_scaling_factor = 0.1;
   int prefix_length = 0;
   for (int i = 0; i < std::min({4, lhs_len, rhs_len}); i++) {
