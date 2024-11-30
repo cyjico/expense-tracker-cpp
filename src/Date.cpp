@@ -25,11 +25,25 @@ bool date::is_valid() const {
 }
 
 bool date::operator<(const date &other) const {
-  return year < other.year || month < other.month || day < other.day;
+  if (year != other.year) {
+    return year < other.year;
+  }
+  if (month != other.month) {
+    return month < other.month;
+  }
+
+  return day < other.day;
 }
 
 bool date::operator>(const date &other) const {
-  return year > other.year || month > other.month || day > other.day;
+  if (year != other.year) {
+    return year > other.year;
+  }
+  if (month != other.month) {
+    return month > other.month;
+  }
+
+  return day > other.day;
 }
 
 date date::from_string(const std::string &date_str) {
