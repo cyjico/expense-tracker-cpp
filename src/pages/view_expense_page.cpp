@@ -59,6 +59,7 @@ void view_expense_page::render(application &app, std::ostream &cout) {
   auto expenses =
       app.at_shared_datum<std::multiset<struct expense>>("expenses");
   double total_expenses = 0;
+
   for (const auto &expense : expenses) {
     total_expenses += expense.amount;
 

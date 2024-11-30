@@ -14,7 +14,6 @@ class add_expense_page : public abstract_page {
     prompt_desc,
     end,
   };
-
   state m_state = state::prompt_date;
   std::string m_alert_msg;
 
