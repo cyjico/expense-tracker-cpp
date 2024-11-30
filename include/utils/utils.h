@@ -11,4 +11,6 @@ std::string trim_string(const std::string &str);
 
 std::string double_to_string(const double &value, uint32_t precision = 2);
 
+double jaro_winkler(const std::string &lhs, const std::string &rhs);
+
 } // namespace utils

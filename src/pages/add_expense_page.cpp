@@ -7,6 +7,7 @@
 #include <regex>
 #include <set>
 #include <string>
+#include <unordered_set>
 
 add_expense_page::add_expense_page() = default;
 
@@ -64,15 +65,40 @@ update_action add_expense_page::update(application &app, std::istream &cin) {
 
     m_state = state::prompt_category;
   } break;
-  case state::prompt_category:
+  case state::prompt_category: {
     if (inp.empty()) {
       m_alert_msg = "Category cannot be empty.\n";
       break;
     }
 
+    const auto &valid_categories =
+        app.at_shared_datum<std::unordered_set<std::string>>(
+            "valid_categories");
+
+    if (valid_categories.find(inp) == valid_categories.end()) {
+      std::string closest_category;
+      double max_similarity = 0.0;
+
+      for (const auto &category : valid_categories) {
+        const double similarity = utils::jaro_winkler(inp, category);
+
+        if (similarity > max_similarity) {
+          max_similarity = similarity;
+          closest_category = category;
+        }
+      }
+
+      m_alert_msg = "Category does not exist.\n";
+      if (max_similarity > 0.7) {
+        m_alert_msg += "Did you perhaps mean \"" + closest_category + "\"?\n";
+      }
+
+      break;
+    }
+
     m_expense.category = inp;
     m_state = state::prompt_amount;
-    break;
+  } break;
   case state::prompt_amount: {
     // Matches num.num or num
     const std::regex patt(R"(^-?[0-9]+\.?[0-9]+$)");
