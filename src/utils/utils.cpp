@@ -1,5 +1,6 @@
 #include "utils/utils.h"
 #include <cstddef>
+#include <cstdint>
 #include <iostream>
 #include <limits>
 #include <string>
@@ -27,13 +28,19 @@ std::string utils::trim_string(const std::string &str) {
   return str.substr(first, last - first + 1);
 }
 
-std::string utils::double_to_string(const double &value) {
+// NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
+std::string utils::double_to_string(const double &value, uint32_t precision) {
   std::string result = std::to_string(value);
 
-  result.erase(result.find_last_not_of('0') + 1, std::string::npos);
-  if (result.back() == '.') {
-    result.pop_back();
-  }
+  auto decimal_pos = result.find('.');
+  if (decimal_pos != std::string::npos) {
+    result.erase(result.find_last_not_of('0') + 1);
 
+    if (result.back() == '.') {
+      result.pop_back();
+    } else {
+      result = result.substr(0, decimal_pos + (1 + precision));
+    }
+  }
   return result;
 }
