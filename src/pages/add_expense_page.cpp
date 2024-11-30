@@ -1,5 +1,6 @@
 #include "pages/add_expense_page.h"
 #include "application.h"
+#include "date.h"
 #include "expense.h"
 #include "pages/abstract_page.h"
 #include "utils/utils.h"
@@ -8,6 +9,81 @@
 #include <set>
 #include <string>
 #include <unordered_set>
+#include <utility>
+
+std::pair<std::string, date>
+add_expense_page::validate_date(const std::string &inp) {
+  date second;
+
+  const std::regex patt(R"(^([0-9]{2})/([0-9]{2})/([0-9]{4})$)");
+  std::smatch match;
+
+  if (!std::regex_match(inp, match, patt)) {
+    return std::make_pair("Invalid date format.\n", second);
+  }
+
+  second.day = std::stoi(match[1].str());
+  second.month = std::stoi(match[2].str());
+  second.year = std::stoi(match[3].str());
+
+  if (!second.is_valid()) {
+    return std::make_pair("Invalid date range.\n", second);
+  }
+
+  return std::make_pair("", second);
+}
+
+std::pair<std::string, std::string>
+add_expense_page::validate_category(const application &app,
+                                    const std::string &inp) {
+  if (inp.empty()) {
+    return std::make_pair("Category cannot be empty.", "");
+  }
+
+  const auto &valid_categories =
+      app.at_shared_datum<std::unordered_set<std::string>>("valid_categories");
+
+  if (valid_categories.find(inp) == valid_categories.end()) {
+    std::string closest_category;
+    double max_similarity = 0.0;
+
+    for (const auto &category : valid_categories) {
+      const double similarity = utils::jaro_winkler(inp, category);
+
+      if (similarity > max_similarity) {
+        max_similarity = similarity;
+        closest_category = category;
+      }
+    }
+
+    std::string buffer = "Category does not exist.\n";
+    if (max_similarity > 0.6) {
+      buffer += "Did you perhaps mean \"" + closest_category + "\"?\n";
+    }
+
+    return std::make_pair(buffer, "");
+  }
+
+  return std::make_pair("", inp);
+}
+
+std::pair<std::string, double>
+add_expense_page::validate_amount(const std::string &inp) {
+  const std::regex patt(R"(^-?[0-9]+\.?[0-9]+$)");
+  std::smatch match;
+
+  if (!std::regex_match(inp, match, patt)) {
+    return std::make_pair("Invalid amount format.\n", 0);
+  }
+
+  const double amount = std::stod(match.str());
+
+  if (amount < 0) {
+    return std::make_pair("Amount cannot be negative.\n", 0);
+  }
+
+  return std::make_pair("", amount);
+}
 
 add_expense_page::add_expense_page() = default;
 
@@ -15,8 +91,17 @@ update_action add_expense_page::update(application &app, std::ostream &cout,
                                        std::istream &cin) {
   utils::clear_screen(cout);
   cout << m_alert_msg;
+  display_prompt(cout, m_state);
 
-  switch (m_state) {
+  std::string inp;
+  std::getline(cin, inp);
+  m_alert_msg = handle_input(app, utils::trim_string(inp), m_expense);
+
+  return update_action::none;
+}
+
+void add_expense_page::display_prompt(std::ostream &cout, const state &state) {
+  switch (state) {
   case state::prompt_date:
     cout << "Enter the date (dd/mm/yyyy): ";
     break;
@@ -35,91 +120,43 @@ update_action add_expense_page::update(application &app, std::ostream &cout,
             "menu.\n";
     break;
   }
+}
 
-  std::string inp;
-  std::getline(cin, inp);
-  inp = utils::trim_string(inp);
-
-  m_alert_msg = "";
-
+std::string add_expense_page::handle_input(application &app,
+                                           const std::string &inp,
+                                           expense &expense) {
   switch (m_state) {
   case state::prompt_date: {
-    // Matches dd/mm/yyyy
-    const std::regex patt(R"(^([0-9]{2})/([0-9]{2})/([0-9]{4})$)");
-    std::smatch match;
-
-    if (!std::regex_match(inp, match, patt)) {
-      m_alert_msg = "Invalid date format.\n";
-      break;
+    const std::pair pair = validate_date(inp);
+    if (!pair.first.empty()) {
+      return pair.first;
     }
 
-    m_expense.date.day = std::stoi(match[1].str());
-    m_expense.date.month = std::stoi(match[2].str());
-    m_expense.date.year = std::stoi(match[3].str());
-
-    if (!m_expense.date.is_valid()) {
-      m_alert_msg = "Invalid date range.\n";
-      break;
-    }
-
+    m_expense.date = pair.second;
     m_state = state::prompt_category;
   } break;
   case state::prompt_category: {
-    if (inp.empty()) {
-      m_alert_msg = "Category cannot be empty.\n";
-      break;
+    const std::pair pair = validate_category(app, inp);
+    if (!pair.first.empty()) {
+      return pair.first;
     }
 
-    const auto &valid_categories =
-        app.at_shared_datum<std::unordered_set<std::string>>(
-            "valid_categories");
-
-    if (valid_categories.find(inp) == valid_categories.end()) {
-      std::string closest_category;
-      double max_similarity = 0.0;
-
-      for (const auto &category : valid_categories) {
-        const double similarity = utils::jaro_winkler(inp, category);
-
-        if (similarity > max_similarity) {
-          max_similarity = similarity;
-          closest_category = category;
-        }
-      }
-
-      m_alert_msg = "Category does not exist.\n";
-      if (max_similarity > 0.7) {
-        m_alert_msg += "Did you perhaps mean \"" + closest_category + "\"?\n";
-      }
-
-      break;
-    }
-
-    m_expense.category = inp;
+    expense.category = pair.second;
     m_state = state::prompt_amount;
   } break;
   case state::prompt_amount: {
-    // Matches num.num or num
-    const std::regex patt(R"(^-?[0-9]+\.?[0-9]+$)");
-    std::smatch match;
-
-    if (!std::regex_match(inp, match, patt)) {
-      m_alert_msg = "Invalid amount format.\n";
-      break;
+    const std::pair pair = validate_amount(inp);
+    if (!pair.first.empty()) {
+      return pair.first;
     }
 
-    m_expense.amount = std::stod(match.str());
-
-    if (m_expense.amount < 0) {
-      m_alert_msg = "Amount cannot be negative.\n";
-      break;
-    }
-
+    expense.amount = pair.second;
     m_state = state::prompt_desc;
   } break;
   case state::prompt_desc:
-    m_expense.desc = inp;
-    app.at_shared_datum<std::multiset<expense>>("expenses").insert(m_expense);
+    expense.desc = inp;
+    app.at_shared_datum<std::multiset<struct expense>>("expenses")
+        .insert(expense);
 
     m_state = state::end;
     break;
@@ -131,5 +168,5 @@ update_action add_expense_page::update(application &app, std::ostream &cout,
     break;
   }
 
-  return update_action::none;
+  return "";
 }
