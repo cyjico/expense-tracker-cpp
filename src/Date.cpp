@@ -6,10 +6,11 @@
 
 date::date() : day(1), month(1), year(0) {}
 
-// Why? because, I do not know how to fix it 🤯
-// NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
+// Skill issue if you swap these parameters
+// NOLINTBEGIN(bugprone-easily-swappable-parameters)
 date::date(uint8_t day, uint8_t month, uint16_t year)
     : day(day), month(month), year(year) {}
+// NOLINTEND(bugprone-easily-swappable-parameters)
 
 std::string date::to_string() const {
   std::ostringstream oss;
