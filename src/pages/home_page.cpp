@@ -77,7 +77,7 @@ update_action home_page::update(application &app, std::ostream &cout,
 
   int inp = 0;
   cin >> inp;
-  std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+  cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
   if (utils::try_flush_failed_istream(cin)) {
     return update_action::none;
