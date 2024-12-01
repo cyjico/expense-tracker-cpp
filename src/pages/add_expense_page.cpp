@@ -15,7 +15,7 @@ std::pair<std::string, date>
 add_expense_page::validate_date(const std::string &inp) {
   date second;
 
-  const std::regex patt(R"(^([0-9]{2})/([0-9]{2})/([0-9]{4})$)");
+  const std::regex patt(R"(^([0-9]?[0-9])\/([0-9]?[0-9])\/([0-9]{1,4})$)");
   std::smatch match;
 
   if (!std::regex_match(inp, match, patt)) {
