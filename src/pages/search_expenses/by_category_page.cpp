@@ -26,115 +26,10 @@ constexpr const char *default_prompt =
 
 } // namespace
 
-// Skill issue if you swap these parameters
-// NOLINTBEGIN(bugprone-easily-swappable-parameters)
-bool by_category_page::validate_datetime_input(const std::string &name,
-                                               size_t max_length, int min_value,
-                                               int max_value,
-                                               const std::string &inp) {
-  if (inp.length() > max_length || inp.empty()) {
-    m_prompt_message = name + " cannot be longer than " +
-                       std::to_string(max_length) +
-                       " characters nor empty.\n\n";
-    return false;
-  }
-
-  int int_input = 0;
-  try {
-    int_input = std::stoi(inp);
-  } catch (const std::exception &e) {
-    m_prompt_message = "Please input a number. Try again.\n\n";
-    return false;
-  }
-
-  if (int_input < min_value || int_input > max_value) {
-    m_prompt_message = name + " must be between " + std::to_string(min_value) +
-                       " and " + std::to_string(max_value) + ". Try again.\n\n";
-    return false;
-  }
-
-  return true;
-}
-// NOLINTEND(bugprone-easily-swappable-parameters)
-
-std::unordered_map<std::string, double>
-by_category_page::filter_expenses_by_date(const application &app,
-                                          const std::string &month,
-                                          const std::string &day) {
-  const auto &expenses =
-      app.at_shared_datum<const std::multiset<expense>>("expenses");
-  std::unordered_map<std::string, double> categorical_expenses;
-
-  for (const auto &expense : expenses) {
-    if (!month.empty() && expense.date.month != std::stoi(month)) {
-      continue;
-    }
-
-    if (!day.empty() && expense.date.day != std::stoi(day)) {
-      continue;
-    }
-
-    categorical_expenses[expense.category] += expense.amount;
-  }
-
-  return categorical_expenses;
-}
-
-by_category_page::by_category_page()
-    : m_prompt_message(default_prompt), m_selected_option(0) {};
-
-update_action by_category_page::update(application &app, std::ostream &cout,
-                                       std::istream &cin) {
-  utils::clear_screen(cout);
-
-  switch (m_state) {
-  case state::prompt:
-  case state::further_prompt:
-    cout << m_prompt_message;
-    break;
-  case state::end:
-    cout << m_search_result << "\n\nPress enter to return to the main menu.";
-    break;
-  }
-
-  std::string inp;
-  std::getline(cin, inp);
-  inp = utils::trim_string(inp);
-
-  switch (m_state) {
-  case state::prompt:
-    try {
-      m_selected_option = std::stoi(utils::trim_string(inp));
-    } catch (const std::exception &e) {
-      break;
-    }
-
-    // DON'T add a `break;` because fall-through is intended!
-  case state::further_prompt:
-    handle_prompt(app, inp);
-    break;
-  case state::end:
-    app.redirect("/");
-
-    // Reset variables for the next time the page is loaded
-    m_state = state::prompt;
-
-    m_prompt_message = default_prompt;
-    m_prompt_cache.clear();
-
-    m_selected_option = 0;
-
-    m_search_result = "";
-    break;
-  }
-
-  return update_action::none;
-}
-
 void by_category_page::handle_prompt(application &app, const std::string &inp) {
   switch (m_selected_option) {
   case 1:
-    m_state = find_expenses_by_category(app, inp);
+    m_state = find_expenses_under_a_category(app, inp);
     break;
   case 2:
   case 3:
@@ -147,7 +42,7 @@ void by_category_page::handle_prompt(application &app, const std::string &inp) {
 }
 
 by_category_page::state
-by_category_page::find_expenses_by_category(application &app,
+by_category_page::find_expenses_under_a_category(application &app,
                                             const std::string &inp) {
   // Prompt for category
   auto category_itr = m_prompt_cache.find("category");
@@ -283,6 +178,113 @@ by_category_page::find_category_with_highest_expense_in_timeframe(
 
   m_search_result = buffer.str();
   return state::end;
+}
+
+// Skill issue if you swap these parameters
+// NOLINTBEGIN(bugprone-easily-swappable-parameters)
+bool by_category_page::validate_datetime_input(const std::string &name,
+                                               size_t max_length, int min_value,
+                                               int max_value,
+                                               const std::string &inp) {
+  if (inp.length() > max_length || inp.empty()) {
+    m_prompt_message = name + " cannot be longer than " +
+                       std::to_string(max_length) +
+                       " characters nor empty.\n\n";
+    return false;
+  }
+
+  int int_input = 0;
+  try {
+    int_input = std::stoi(inp);
+  } catch (const std::exception &e) {
+    m_prompt_message = "Please input a number. Try again.\n\n";
+    return false;
+  }
+
+  if (int_input < min_value || int_input > max_value) {
+    m_prompt_message = name + " must be between " + std::to_string(min_value) +
+                       " and " + std::to_string(max_value) + ". Try again.\n\n";
+    return false;
+  }
+
+  return true;
+}
+// NOLINTEND(bugprone-easily-swappable-parameters)
+
+std::unordered_map<std::string, double>
+by_category_page::filter_expenses_by_date(const application &app,
+                                          const std::string &month,
+                                          const std::string &day) {
+  const auto &expenses =
+      app.at_shared_datum<const std::multiset<expense>>("expenses");
+  std::unordered_map<std::string, double> categorical_expenses;
+
+  for (const auto &expense : expenses) {
+    if (!month.empty() && expense.date.month != std::stoi(month)) {
+      continue;
+    }
+
+    if (!day.empty() && expense.date.day != std::stoi(day)) {
+      continue;
+    }
+
+    categorical_expenses[expense.category] += expense.amount;
+  }
+
+  return categorical_expenses;
+}
+
+// --- public ---
+
+by_category_page::by_category_page()
+    : m_prompt_message(default_prompt), m_selected_option(0) {};
+
+update_action by_category_page::update(application &app, std::ostream &cout,
+                                       std::istream &cin) {
+  utils::clear_screen(cout);
+
+  switch (m_state) {
+  case state::prompt:
+  case state::further_prompt:
+    cout << m_prompt_message;
+    break;
+  case state::end:
+    cout << m_search_result << "\n\nPress enter to return to the main menu.";
+    break;
+  }
+
+  std::string inp;
+  std::getline(cin, inp);
+  inp = utils::trim_string(inp);
+
+  switch (m_state) {
+  case state::prompt:
+    try {
+      m_selected_option = std::stoi(utils::trim_string(inp));
+    } catch (const std::exception &e) {
+      break;
+    }
+
+    // DON'T add a `break;` because fall-through is intended!
+  case state::further_prompt:
+    handle_prompt(app, inp);
+    break;
+  case state::end:
+    app.redirect("/");
+
+    // Reset variables for the next time the page is loaded
+    m_state = state::prompt;
+
+    m_prompt_message = default_prompt;
+    m_prompt_cache.clear();
+
+    m_selected_option = 0;
+
+    m_search_result = "";
+    break;
+  }
+
+  return update_action::none;
 }
 
 } // namespace search_expenses
