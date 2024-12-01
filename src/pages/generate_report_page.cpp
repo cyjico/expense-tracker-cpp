@@ -80,11 +80,7 @@ void generate_report_page::display_prompt(application &app, std::ostream &cout,
 
       total_amount += expense.amount;
 
-      if (cat_amounts.find(expense.category) == cat_amounts.end()) {
-        cat_amounts.emplace(expense.category, 0.0);
-      }
-
-      cat_amounts.at(expense.category) += expense.amount;
+      cat_amounts[expense.category] += expense.amount;
     }
 
     cout << "Monthly Report (" << date::get_month_name(date.month) << " "

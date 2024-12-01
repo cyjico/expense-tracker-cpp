@@ -22,14 +22,14 @@ class by_category_page : public abstract_page {
   int m_selected_option;
   std::string m_search_result;
 
-  void handle_prompt(application &app, const std::string &inp);
+  void handle_prompt(const application &app, const std::string &inp);
 
   // --- `find_expenses_under_a_category` gang ---
-  state find_expenses_under_a_category(application &app,
+  state find_expenses_under_a_category(const application &app,
                                        const std::string &inp);
 
   // --- `find_category_with_highest_expense_in_timeframe` gang ---
-  state find_category_with_highest_expense_in_timeframe(application &app,
+  state find_category_with_highest_expense_in_timeframe(const application &app,
                                                         const std::string &inp);
   bool validate_datetime_input(const std::string &name, size_t max_length,
                                int min_value, int max_value,

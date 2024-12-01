@@ -26,7 +26,8 @@ constexpr const char *default_prompt =
 
 } // namespace
 
-void by_category_page::handle_prompt(application &app, const std::string &inp) {
+void by_category_page::handle_prompt(const application &app,
+                                     const std::string &inp) {
   switch (m_selected_option) {
   case 1:
     m_state = find_expenses_under_a_category(app, inp);
@@ -42,8 +43,8 @@ void by_category_page::handle_prompt(application &app, const std::string &inp) {
 }
 
 by_category_page::state
-by_category_page::find_expenses_under_a_category(application &app,
-                                            const std::string &inp) {
+by_category_page::find_expenses_under_a_category(const application &app,
+                                                 const std::string &inp) {
   // Prompt for category
   auto category_itr = m_prompt_cache.find("category");
   if (category_itr == m_prompt_cache.end()) {
@@ -105,7 +106,7 @@ by_category_page::find_expenses_under_a_category(application &app,
 
 by_category_page::state
 by_category_page::find_category_with_highest_expense_in_timeframe(
-    application &app, const std::string &inp) {
+    const application &app, const std::string &inp) {
   // Prompt for year
   auto year_itr = m_prompt_cache.find("year");
   if (year_itr == m_prompt_cache.end()) {

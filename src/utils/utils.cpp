@@ -47,7 +47,7 @@ std::string utils::double_to_string(const double &value, uint32_t precision) {
     if (result.back() == '.') {
       result.pop_back();
     } else {
-      result = result.substr(0, decimal_pos + (1 + precision));
+      result.resize(decimal_pos + (1 + precision));
     }
   }
   return result;
