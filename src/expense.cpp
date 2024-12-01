@@ -1,6 +1,5 @@
 #include "expense.h"
 #include "date.h"
-#include <sstream>
 #include <string>
 #include <utility>
 
@@ -17,10 +16,4 @@ bool expense::operator<(const expense &other) const {
 
 bool expense::operator>(const expense &other) const {
   return date > other.date;
-}
-
-std::string expense::to_string() const {
-  std::ostringstream oss;
-  oss << date.to_string() << "," << category << "," << amount << "," << desc;
-  return oss.str();
 }

@@ -16,6 +16,7 @@
 
 namespace {
 
+constexpr char delimiter = '\x1E';
 constexpr const char *file_name = ".etkcpp_expenses.txt";
 
 } // namespace
@@ -43,9 +44,9 @@ void home_page::attach_listeners(application &app) {
           std::string date_str;
           std::string category;
           std::string amount_str;
-          if (std::getline(stream, date_str, ',') &&
-              std::getline(stream, category, ',') &&
-              std::getline(stream, amount_str, ',')) {
+          if (std::getline(stream, date_str, delimiter) &&
+              std::getline(stream, category, delimiter) &&
+              std::getline(stream, amount_str, delimiter)) {
 
             expense expense;
             expense.date = date::from_string(date_str);
@@ -116,7 +117,9 @@ update_action home_page::update(application &app, std::ostream &cout,
     const auto &expenses =
         app.at_shared_datum<std::multiset<expense>>("expenses");
     for (const auto &expense : expenses) {
-      out_file << expense.to_string() << '\n';
+      out_file << expense.date.to_string() << delimiter << expense.category
+               << delimiter << utils::double_to_string(expense.amount, 0, false)
+               << delimiter << expense.desc << '\n';
     }
 
     out_file.close();
