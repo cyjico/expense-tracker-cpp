@@ -60,7 +60,7 @@ add_expense_page::validate_category(const application &app,
         "Category \"" + inp + "\" does not exist.\n" +
         (max_similarity > 0.6
              ? "Did you perhaps mean \"" + closest_category + "\"?\n\n"
-             : "\n\n");
+             : "\n");
 
     return std::make_pair(buffer, "");
   }
