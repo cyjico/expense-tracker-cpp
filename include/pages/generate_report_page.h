@@ -7,10 +7,10 @@
 
 class generate_report_page : public abstract_page {
   enum class state : uint8_t {
-    prompt_date,
+    prompt,
     end,
   };
-  state m_state = state::prompt_date;
+  state m_state = state::prompt;
   std::string m_alert_msg;
 
   date m_date;

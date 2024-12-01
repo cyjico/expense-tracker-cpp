@@ -31,7 +31,7 @@ update_action generate_report_page::update(application &app, std::ostream &cout,
 std::string generate_report_page::handle_input(application &app,
                                                const std::string &inp) {
   switch (m_state) {
-  case state::prompt_date: {
+  case state::prompt: {
     // Matches dd/mm/yyyy
     const std::regex patt(R"(^([0-9]{2})/([0-9]{4})$)");
     std::smatch match;
@@ -53,7 +53,7 @@ std::string generate_report_page::handle_input(application &app,
   default:
     app.redirect("/");
 
-    m_state = state::prompt_date;
+    m_state = state::prompt;
     break;
   }
 
@@ -64,7 +64,7 @@ void generate_report_page::display_prompt(application &app, std::ostream &cout,
                                           const state &state,
                                           const date &date) {
   switch (state) {
-  case state::prompt_date:
+  case state::prompt:
     cout << "Enter the month and year (mm/yyyy): ";
     break;
   case state::end:
