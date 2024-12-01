@@ -21,7 +21,8 @@ Checks: "*,\
   -cppcoreguidelines-avoid-magic-numbers,\
   -readability-magic-numbers,\
   -readability-math-missing-parentheses,\
-  -boost-*"
+  -boost-*,\
+  -abseil-*"
 WarningsAsErrors: ""
 FormatStyle: "file"
 CheckOptions:
