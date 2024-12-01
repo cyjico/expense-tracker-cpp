@@ -1,5 +1,6 @@
 #pragma once
 #include <cstdint>
+#include <cstdio>
 #include <stdexcept>
 #include <string>
 
@@ -39,10 +40,18 @@ struct date {
   /**
    * @brief Creates a date from "dd/mm/yyyy".
    *
+   * It does not check if the values are within logical range.
+   *
    * @param date_str
    * @return
+   * @throws std::runtime_error if it does not follow "dd/mm/yyyy".
    */
   static date from_string(const std::string &date_str);
+
+  static std::string get_name(const uint8_t &day, const uint8_t &month,
+                              const uint16_t &year);
+  static std::string get_name(const uint8_t &month, const uint16_t &year);
+  static std::string get_name(const uint16_t &year);
 
   /**
    * @brief Retrieves the name of the month from the month number.
@@ -55,10 +64,6 @@ struct date {
 };
 
 constexpr const char *date::get_month_name(uint8_t month) {
-  // Why implement here? Why not in date.cpp?
-  // Simply because constexpr member functions must be availble at compile-time
-  // to be evaluated.
-
   switch (month) {
   case 1:
     return "January";

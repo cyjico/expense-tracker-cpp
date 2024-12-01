@@ -64,9 +64,27 @@ date date::from_string(const std::string &date_str) {
   date.day = std::stoi(day_str);
   date.month = std::stoi(month_str);
   date.year = std::stoi(year_str);
-  if (!date.is_valid()) {
-    throw std::runtime_error("Invalid value/s for day, month, or/and year");
+  return date;
+}
+
+std::string date::get_name(const uint8_t &day, const uint8_t &month,
+                           const uint16_t &year) {
+  if (day < 1 || day > 31) {
+    return get_name(month, year);
   }
 
-  return date;
+  return std::string(get_month_name(month)) + " " + std::to_string(day) + ", " +
+         std::to_string(year);
+}
+
+std::string date::get_name(const uint8_t &month, const uint16_t &year) {
+  if (month < 1 || month > 12) {
+    return get_name(year);
+  }
+
+  return std::string(get_month_name(month)) + " " + std::to_string(year);
+}
+
+std::string date::get_name(const uint16_t &year) {
+  return std::to_string(year);
 }
