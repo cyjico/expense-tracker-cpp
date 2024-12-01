@@ -16,13 +16,18 @@ set(INCLUDE_DIR ${CMAKE_SOURCE_DIR}/include)
 set(INCLUDE_FILES
     ${INCLUDE_DIR}/events/event_emitter.hpp
     ${INCLUDE_DIR}/events/page_event_emitter.h
+    # /pages/search_expenses/
+    ${INCLUDE_DIR}/pages/search_expenses/by_category_page.h
+    # /pages/
     ${INCLUDE_DIR}/pages/abstract_page.h
     ${INCLUDE_DIR}/pages/add_expense_page.h
     ${INCLUDE_DIR}/pages/generate_report_page.h
     ${INCLUDE_DIR}/pages/home_page.h
+    ${INCLUDE_DIR}/pages/search_expenses_page.h
     ${INCLUDE_DIR}/pages/view_expenses_page.h
+    # /utils/
     ${INCLUDE_DIR}/utils/utils.h
-    # include/
+    # /
     ${INCLUDE_DIR}/application.h
     ${INCLUDE_DIR}/date.h
     ${INCLUDE_DIR}/expense.h)
@@ -32,12 +37,17 @@ include_directories(${INCLUDE_DIR})
 set(SRC_DIR ${CMAKE_SOURCE_DIR}/src)
 set(SRC_FILES
     ${SRC_DIR}/events/page_event_emitter.cpp
+    # /pages/search_expenses/
+    ${SRC_DIR}/pages/search_expenses/by_category_page.cpp
+    # /pages/
     ${SRC_DIR}/pages/add_expense_page.cpp
     ${SRC_DIR}/pages/generate_report_page.cpp
     ${SRC_DIR}/pages/home_page.cpp
+    ${SRC_DIR}/pages/search_expenses_page.cpp
     ${SRC_DIR}/pages/view_expenses_page.cpp
+    # /utils/
     ${SRC_DIR}/utils/utils.cpp
-    # src/
+    # /
     ${SRC_DIR}/application.cpp
     ${SRC_DIR}/date.cpp
     ${SRC_DIR}/expense.cpp
