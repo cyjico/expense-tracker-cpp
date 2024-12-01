@@ -5,9 +5,9 @@
 #include "expense.h"
 #include "pages/abstract_page.h"
 #include "utils/utils.h"
+#include <exception>
 #include <fstream>
 #include <iostream>
-#include <limits>
 #include <ostream>
 #include <set>
 #include <sstream>
@@ -75,19 +75,21 @@ update_action home_page::update(application &app, std::ostream &cout,
           "4. Generate Monthly Report\n"
           "5. Save and Exit\n";
 
-  int inp = 0;
-  cin >> inp;
-  cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+  std::string inp;
+  std::getline(cin, inp);
 
-  if (utils::try_flush_failed_istream(cin)) {
+  int option = 0;
+  try {
+    option = std::stoi(utils::trim_string(inp));
+  } catch (const std::exception &e) {
     return update_action::none;
   }
 
-  if (inp < 1 || inp > 5) {
+  if (option < 1 || option > 5) {
     return update_action::none;
   }
 
-  switch (inp) {
+  switch (option) {
   case 1:
     app.redirect("/add-expense");
     break;
