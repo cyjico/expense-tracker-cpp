@@ -41,12 +41,14 @@ std::string utils::double_to_string(const double &value, const int &precision,
   std::string str = std::to_string(value);
 
   size_t decimal_pos = str.rfind('.');
-  if (precision >= 0 && decimal_pos != std::string::npos) {
+  if (decimal_pos != std::string::npos) {
     // remove trailing zeros/decimal point
     str.erase(str.find_last_not_of('0') + 1);
 
     if (str.back() != '.') {
-      str.resize(decimal_pos + (1 + precision));
+      if (precision >= 0) {
+        str.resize(decimal_pos + (1 + precision));
+      }
     } else {
       decimal_pos = std::string::npos;
 
