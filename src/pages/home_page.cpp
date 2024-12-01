@@ -14,7 +14,11 @@
 #include <string>
 #include <unordered_set>
 
-static constexpr const char *file_name = ".etkcpp_expenses.txt";
+namespace {
+
+constexpr const char *file_name = ".etkcpp_expenses.txt";
+
+} // namespace
 
 home_page::home_page() = default;
 
@@ -39,7 +43,6 @@ void home_page::attach_listeners(application &app) {
           std::string date_str;
           std::string category;
           std::string amount_str;
-          std::string desc;
           if (std::getline(stream, date_str, ',') &&
               std::getline(stream, category, ',') &&
               std::getline(stream, amount_str, ',')) {
@@ -48,6 +51,8 @@ void home_page::attach_listeners(application &app) {
             expense.date = date::from_string(date_str);
             expense.category = category;
             expense.amount = std::stod(amount_str);
+
+            std::string desc;
             expense.desc = std::getline(stream, desc) ? desc : "";
 
             expenses.insert(expense);
