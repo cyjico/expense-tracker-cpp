@@ -54,8 +54,8 @@ std::string utils::double_to_string(const double &value,
   }
 
   if (has_separator && result.length() > 3) {
-    size_t pos = result.find('.');
-    int insert_pos = static_cast<int>(
+    const size_t pos = result.find('.');
+    const int insert_pos = static_cast<int>(
         pos == std::string::npos ? static_cast<int>(result.length()) : pos);
 
     for (int i = insert_pos - 3; i > 0; i -= 3) {

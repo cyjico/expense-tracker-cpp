@@ -95,11 +95,12 @@ by_datetime_page::find_datetime_with_highest_expense(const application &app) {
                          return lhs.second < rhs.second;
                        });
 
-  date temp = date::from_string(max_iter->first);
-  m_search_result = "The datetime with highest expense was at " +
-                    date::get_name(temp.day, temp.month, temp.year) +
-                    " with an expense totaling up to " +
-                    utils::double_to_string(max_iter->second);
+  const date temp_date = date::from_string(max_iter->first);
+  m_search_result =
+      "The datetime with highest expense was at " +
+      date::get_name(temp_date.day, temp_date.month, temp_date.year) +
+      " with an expense totaling up to " +
+      utils::double_to_string(max_iter->second);
 
   return state::end;
 }
