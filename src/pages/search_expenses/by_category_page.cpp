@@ -93,7 +93,7 @@ update_action by_category_page::update(application &app, std::ostream &cout,
     cout << m_prompt_message;
     break;
   case state::end:
-    cout << m_search_result << "\nPress enter to return to the main menu.";
+    cout << m_search_result << "\n\nPress enter to return to the main menu.";
     break;
   }
 
@@ -116,7 +116,7 @@ update_action by_category_page::update(application &app, std::ostream &cout,
   case state::end:
     app.redirect("/");
 
-    // Reset variables for the next time the page is loaded.
+    // Reset variables for the next time the page is loaded
     m_state = state::prompt;
 
     m_prompt_message = default_prompt;
@@ -200,7 +200,7 @@ by_category_page::find_expenses_by_category(application &app,
     }
 
     m_search_result += "Spent " + utils::double_to_string(expense.amount) +
-                       " at " + expense.date.to_string() + '\n';
+                       " at " + expense.date.to_string();
   }
 
   return state::end;
@@ -270,8 +270,9 @@ by_category_page::find_category_with_highest_expense_in_timeframe(
       categorical_expenses.begin(), categorical_expenses.end(),
       [](const auto &lhs, const auto &rhs) { return lhs.second < rhs.second; });
 
-  std::stringstream buffer("Highest expense during ");
-  buffer << (m_prompt_cache.find("day") != m_prompt_cache.end()
+  std::stringstream buffer;
+  buffer << "Highest expense during "
+         << (m_prompt_cache.find("day") != m_prompt_cache.end()
                  ? m_prompt_cache["day"] + "/"
                  : "")
          << (m_prompt_cache.find("month") != m_prompt_cache.end()
