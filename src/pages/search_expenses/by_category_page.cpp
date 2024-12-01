@@ -200,9 +200,11 @@ by_category_page::find_expenses_by_category(application &app,
     }
 
     m_search_result += "Spent " + utils::double_to_string(expense.amount) +
-                       " at " + expense.date.to_string();
+                       " at " + expense.date.to_string() + "\n";
   }
 
+  // Remove the new line at the end
+  m_search_result.erase(m_search_result.end() - 1);
   return state::end;
 }
 
@@ -272,12 +274,9 @@ by_category_page::find_category_with_highest_expense_in_timeframe(
 
   std::stringstream buffer;
   buffer << "Highest expense during "
-         << (m_prompt_cache.find("day") != m_prompt_cache.end()
-                 ? m_prompt_cache["day"] + "/"
-                 : "")
-         << (m_prompt_cache.find("month") != m_prompt_cache.end()
-                 ? m_prompt_cache["month"] + "/"
-                 : "")
+         << (m_prompt_cache["day"].empty() ? "" : m_prompt_cache["day"] + "/")
+         << (m_prompt_cache["month"].empty() ? ""
+                                             : m_prompt_cache["month"] + "/")
          << m_prompt_cache["year"] << " was in category \"" << max_iter->first
          << "\" with an expense of "
          << utils::double_to_string(max_iter->second);
