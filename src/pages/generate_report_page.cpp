@@ -4,7 +4,6 @@
 #include "expense.h"
 #include "pages/abstract_page.h"
 #include "utils/utils.h"
-#include <iomanip>
 #include <ios>
 #include <istream>
 #include <ostream>
@@ -70,7 +69,7 @@ void generate_report_page::display_prompt(application &app, std::ostream &cout,
   case state::end:
   default: {
     double total_amount = 0.0;
-    std::unordered_map<std::string, double> cat_amounts;
+    std::unordered_map<std::string, double> expenses_sum_by_category;
 
     auto expenses = app.at_shared_datum<std::multiset<expense>>("expenses");
     for (const auto &expense : expenses) {
@@ -79,18 +78,17 @@ void generate_report_page::display_prompt(application &app, std::ostream &cout,
       }
 
       total_amount += expense.amount;
-
-      cat_amounts[expense.category] += expense.amount;
+      expenses_sum_by_category[expense.category] += expense.amount;
     }
 
-    cout << "Monthly Report (" << date::get_month_name(date.month) << " "
-         << date.year << ")\n"
+    cout << "Monthly Report (" << date::get_name(date.month, date.year) << ")\n"
          << "---------------------------------"
-         << "\nTotal Expenses: " << total_amount << '\n'
-         << std::fixed << std::setprecision(2);
+         << "\nTotal Expenses: " << utils::double_to_string(total_amount)
+         << '\n';
 
-    for (const auto &cat_amount : cat_amounts) {
-      cout << cat_amount.first << ": " << cat_amount.second << " ("
+    for (const auto &cat_amount : expenses_sum_by_category) {
+      cout << cat_amount.first << ": "
+           << utils::double_to_string(cat_amount.second) << " ("
            << (cat_amount.second / total_amount * 100) << "%)\n";
     }
 
