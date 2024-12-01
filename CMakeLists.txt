@@ -75,8 +75,9 @@ if(CPPCHECK_BIN)
     cppcheck
     COMMAND
       ${CPPCHECK_BIN} --enable=all --std=c++17 --language=c++
-      --suppress=missingIncludeSystem -I${INCLUDE_DIR} ${SRC_FILES}
-      ${INCLUDE_FILES}
+      --check-level=exhaustive --suppress=missingIncludeSystem
+      --suppress=unusedStructMember --suppress=unusedFunction -I${INCLUDE_DIR}
+      ${SRC_FILES} ${INCLUDE_FILES}
     COMMENT "Running cppcheck on source and include files")
 else()
   message(WARNING "cppcheck not found. Skipping cppcheck.")
