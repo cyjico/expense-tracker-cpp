@@ -37,7 +37,9 @@ std::string utils::trim_string(const std::string &str) {
 }
 
 // NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
-std::string utils::double_to_string(const double &value, uint32_t precision) {
+std::string utils::double_to_string(const double &value,
+                                    const uint32_t &precision,
+                                    const bool &has_separator) {
   std::string result = std::to_string(value);
 
   auto decimal_pos = result.find('.');
@@ -46,10 +48,21 @@ std::string utils::double_to_string(const double &value, uint32_t precision) {
 
     if (result.back() == '.') {
       result.pop_back();
-    } else {
+    } else if (precision > 0) {
       result.resize(decimal_pos + (1 + precision));
     }
   }
+
+  if (has_separator && result.length() > 3) {
+    size_t pos = result.find('.');
+    int insert_pos = static_cast<int>(
+        pos == std::string::npos ? static_cast<int>(result.length()) : pos);
+
+    for (int i = insert_pos - 3; i > 0; i -= 3) {
+      result.insert(i, ",");
+    }
+  }
+
   return result;
 }
 
