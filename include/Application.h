@@ -38,7 +38,7 @@ public:
    *
    * @param key
    * @return
-   * @throw std::out_of_range if no such datum is present. std::runtime_error if
+   * @throws std::out_of_range if no such datum is present. std::runtime_error if
    * the datum could not be casted to the requested type.
    */
   template <typename T> T &at_shared_datum(const std::string &key);

@@ -12,7 +12,7 @@ update_action search_expenses_page::update(application &app, std::ostream &cout,
                                            std::istream &cin) {
   utils::clear_screen(cout);
   cout << "1. Find expenses by category\n"
-          "2. Find expenses by time period (day/month/year)\n"
+          "2. Find expenses by datetime (day/month/year)\n"
           "3. Exit\n";
 
   std::string inp;
@@ -30,7 +30,7 @@ update_action search_expenses_page::update(application &app, std::ostream &cout,
     app.redirect("/search-expenses/by-category");
     break;
   case 2:
-    app.redirect("/search-expenses/by-time-period");
+    app.redirect("/search-expenses/by-datetime");
     break;
   case 3:
     app.redirect("/");

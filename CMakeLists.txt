@@ -18,6 +18,7 @@ set(INCLUDE_FILES
     ${INCLUDE_DIR}/events/page_event_emitter.h
     # /pages/search_expenses/
     ${INCLUDE_DIR}/pages/search_expenses/by_category_page.h
+    ${INCLUDE_DIR}/pages/search_expenses/by_datetime_page.h
     # /pages/
     ${INCLUDE_DIR}/pages/abstract_page.h
     ${INCLUDE_DIR}/pages/add_expense_page.h
@@ -39,6 +40,7 @@ set(SRC_FILES
     ${SRC_DIR}/events/page_event_emitter.cpp
     # /pages/search_expenses/
     ${SRC_DIR}/pages/search_expenses/by_category_page.cpp
+    ${SRC_DIR}/pages/search_expenses/by_datetime_page.cpp
     # /pages/
     ${SRC_DIR}/pages/add_expense_page.cpp
     ${SRC_DIR}/pages/generate_report_page.cpp
