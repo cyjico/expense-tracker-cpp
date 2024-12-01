@@ -172,17 +172,23 @@ by_category_page::find_category_with_highest_expense_in_datetime(
       sum_expenses_by_category_in_datetime(app, m_prompt_cache["month"],
                                            m_prompt_cache["day"]);
 
+  const std::string name = date::get_name(
+      m_prompt_cache["day"].empty() ? 0 : std::stoi(m_prompt_cache["day"]),
+      m_prompt_cache["month"].empty() ? 0 : std::stoi(m_prompt_cache["month"]),
+      m_prompt_cache["year"].empty() ? 0 : std::stoi(m_prompt_cache["year"]));
+
+  if (categoried_expenses.empty()) {
+    m_search_result = "Found no expenses during " + name;
+    return state::end;
+  }
+
   auto max_iter = std::max_element(
       categoried_expenses.begin(), categoried_expenses.end(),
       [](const auto &lhs, const auto &rhs) { return lhs.second < rhs.second; });
 
   std::stringstream buffer;
-  buffer << "Highest expense during "
-         << (m_prompt_cache["day"].empty() ? "" : m_prompt_cache["day"] + "/")
-         << (m_prompt_cache["month"].empty() ? ""
-                                             : m_prompt_cache["month"] + "/")
-         << m_prompt_cache["year"] << " was in category \"" << max_iter->first
-         << "\" with an expense of "
+  buffer << "Highest expense at " << name << " was in category \""
+         << max_iter->first << "\" with an expense of "
          << utils::double_to_string(max_iter->second);
 
   m_search_result = buffer.str();
