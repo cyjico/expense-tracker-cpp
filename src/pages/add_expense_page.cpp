@@ -11,6 +11,89 @@
 #include <unordered_set>
 #include <utility>
 
+std::string add_expense_page::handle_input(application &app,
+                                           const std::string &inp) {
+  switch (m_state) {
+  case state::prompt_date: {
+    const std::pair pair = validate_date(inp);
+    if (!pair.first.empty()) {
+      return pair.first;
+    }
+
+    m_expense.date = pair.second;
+    m_state = state::prompt_category;
+  } break;
+  case state::prompt_category: {
+    const std::pair pair = validate_category(app, inp);
+    if (!pair.first.empty()) {
+      return pair.first;
+    }
+
+    m_expense.category = pair.second;
+    m_state = state::prompt_amount;
+  } break;
+  case state::prompt_amount: {
+    const std::pair pair = validate_amount(inp);
+    if (!pair.first.empty()) {
+      return pair.first;
+    }
+
+    m_expense.amount = pair.second;
+    m_state = state::prompt_desc;
+  } break;
+  case state::prompt_desc:
+    m_expense.desc = inp;
+    app.at_shared_datum<application::expense_datum>("expenses")
+        .insert(m_expense);
+
+    m_state = state::end;
+    break;
+  case state::end:
+  default:
+    app.redirect("/");
+
+    m_state = state::prompt_date;
+    break;
+  }
+
+  return "";
+}
+
+void add_expense_page::display_prompt(const application &app,
+                                      std::ostream &cout, const state &state) {
+  switch (state) {
+  case state::prompt_date:
+    cout << "Enter the date (dd/mm/yyyy): ";
+    break;
+  case state::prompt_category:
+    cout << "The availble categories are:\n";
+
+    {
+      const auto &valid_categories =
+          app.at_shared_datum<std::unordered_set<std::string>>(
+              "valid_categories");
+
+      for (const auto &category : valid_categories) {
+        cout << category << '\n';
+      }
+    }
+
+    cout << "\nEnter the category: ";
+    break;
+  case state::prompt_amount:
+    cout << "Enter the amount: ";
+    break;
+  case state::prompt_desc:
+    cout << "Enter a description (optional): ";
+    break;
+  case state::end:
+  default:
+    cout << "Expense added successfully!\nPress enter to return to the main "
+            "menu.\n";
+    break;
+  }
+}
+
 std::pair<std::string, date>
 add_expense_page::validate_date(const std::string &inp) {
   date second;
@@ -99,87 +182,4 @@ update_action add_expense_page::update(application &app, std::ostream &cout,
   m_alert_msg = handle_input(app, utils::trim_string(inp));
 
   return update_action::none;
-}
-
-std::string add_expense_page::handle_input(application &app,
-                                           const std::string &inp) {
-  switch (m_state) {
-  case state::prompt_date: {
-    const std::pair pair = validate_date(inp);
-    if (!pair.first.empty()) {
-      return pair.first;
-    }
-
-    m_expense.date = pair.second;
-    m_state = state::prompt_category;
-  } break;
-  case state::prompt_category: {
-    const std::pair pair = validate_category(app, inp);
-    if (!pair.first.empty()) {
-      return pair.first;
-    }
-
-    m_expense.category = pair.second;
-    m_state = state::prompt_amount;
-  } break;
-  case state::prompt_amount: {
-    const std::pair pair = validate_amount(inp);
-    if (!pair.first.empty()) {
-      return pair.first;
-    }
-
-    m_expense.amount = pair.second;
-    m_state = state::prompt_desc;
-  } break;
-  case state::prompt_desc:
-    m_expense.desc = inp;
-    app.at_shared_datum<std::multiset<struct expense>>("expenses")
-        .insert(m_expense);
-
-    m_state = state::end;
-    break;
-  case state::end:
-  default:
-    app.redirect("/");
-
-    m_state = state::prompt_date;
-    break;
-  }
-
-  return "";
-}
-
-void add_expense_page::display_prompt(const application &app,
-                                      std::ostream &cout, const state &state) {
-  switch (state) {
-  case state::prompt_date:
-    cout << "Enter the date (dd/mm/yyyy): ";
-    break;
-  case state::prompt_category:
-    cout << "The availble categories are:\n";
-
-    {
-      const auto &valid_categories =
-          app.at_shared_datum<std::unordered_set<std::string>>(
-              "valid_categories");
-
-      for (const auto &category : valid_categories) {
-        cout << category << '\n';
-      }
-    }
-
-    cout << "\nEnter the category: ";
-    break;
-  case state::prompt_amount:
-    cout << "Enter the amount: ";
-    break;
-  case state::prompt_desc:
-    cout << "Enter a description (optional): ";
-    break;
-  case state::end:
-  default:
-    cout << "Expense added successfully!\nPress enter to return to the main "
-            "menu.\n";
-    break;
-  }
 }

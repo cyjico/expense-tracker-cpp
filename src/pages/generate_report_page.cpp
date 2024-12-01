@@ -31,8 +31,7 @@ std::string generate_report_page::handle_input(application &app,
                                                const std::string &inp) {
   switch (m_state) {
   case state::prompt: {
-    // Matches dd/mm/yyyy
-    const std::regex patt(R"(^([0-9]{2})/([0-9]{4})$)");
+    const std::regex patt(R"(^([0-9]?[0-9])\/([0-9]?[0-9])\/([0-9]{1,4})$)");
     std::smatch match;
 
     if (!std::regex_match(inp, match, patt)) {
@@ -71,7 +70,7 @@ void generate_report_page::display_prompt(application &app, std::ostream &cout,
     double total_amount = 0.0;
     std::unordered_map<std::string, double> expenses_sum_by_category;
 
-    auto expenses = app.at_shared_datum<std::multiset<expense>>("expenses");
+    auto expenses = app.at_shared_datum<application::expense_datum>("expenses");
     for (const auto &expense : expenses) {
       if (date.year != expense.date.year || date.month != expense.date.month) {
         continue;
@@ -86,10 +85,10 @@ void generate_report_page::display_prompt(application &app, std::ostream &cout,
          << "\nTotal Expenses: " << utils::double_to_string(total_amount)
          << '\n';
 
-    for (const auto &cat_amount : expenses_sum_by_category) {
-      cout << cat_amount.first << ": "
-           << utils::double_to_string(cat_amount.second) << " ("
-           << (cat_amount.second / total_amount * 100) << "%)\n";
+    for (const auto &expenses_sum : expenses_sum_by_category) {
+      cout << expenses_sum.first << ": "
+           << utils::double_to_string(expenses_sum.second) << " ("
+           << (expenses_sum.second / total_amount * 100) << "%)\n";
     }
 
     cout << std::defaultfloat << "\nPress enter to return to the main menu.";

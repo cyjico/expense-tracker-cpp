@@ -30,11 +30,11 @@ class by_category_page : public abstract_page {
 
   void handle_prompt(const application &app, const std::string &inp);
 
-  // --- `find_expenses_under_a_category` gang ---
+  // --- `find_expenses_under_a_category` section ---
   state find_expenses_under_a_category(const application &app,
                                        const std::string &inp);
 
-  // --- `find_category_with_highest_expense_in_datetime` gang ---
+  // --- `find_category_with_highest_expense_in_datetime` section ---
   state find_category_with_highest_expense_in_datetime(const application &app,
                                                        const std::string &inp);
   bool validate_datetime_input(const std::string &name, size_t max_length,

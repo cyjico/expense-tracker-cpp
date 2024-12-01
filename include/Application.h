@@ -1,7 +1,9 @@
 #pragma once
 #include "events/page_event_emitter.h"
+#include "expense.h"
 #include <any>
 #include <memory>
+#include <set>
 #include <stdexcept>
 #include <string>
 #include <unordered_map>
@@ -19,6 +21,8 @@ class application {
   page_event_emitter m_onpageunload;
 
 public:
+  using expense_datum = std::multiset<expense, expense::date_comparator>;
+
   application();
 
   void initialize(page_map pages);

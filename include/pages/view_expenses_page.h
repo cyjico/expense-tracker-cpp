@@ -18,24 +18,31 @@ class view_expenses_page
     show_sort_by_amount,
     end,
   };
+
+  /**
+   * @brief Represents the previous state of the page, used to save on
+   * displaying.
+   */
   state m_prev_state = state::show_sort_by_date;
+
+  /**
+   * @brief Represents the state of the page.
+   */
   state m_state = state::end;
 
   std::vector<expense> m_table_rows;
   uint32_t m_table_cell_width = 0;
   uint32_t m_table_cell_padding;
 
-  static void sort_rows(const state &state, std::vector<expense> &table_rows);
-
   /**
-   * @brief Render a cell unto `cout` with proper spacing and padding.
+   * @brief Display a cell unto `cout` with proper spacing and padding.
    *
    * @param cout
    * @param text
    */
   void render_cell(std::ostream &cout, const std::string &text) const;
   /**
-   * @brief Render a whole row of cells.
+   * @brief Display a whole row of cells.
    *
    * @tparam Args
    * @param cout
@@ -44,7 +51,7 @@ class view_expenses_page
   template <typename... Args>
   void render_row(std::ostream &cout, const Args &&...args) const;
   /**
-   * @brief Render a horizontal row `cells` cells long.
+   * @brief Display a horizontal row `cells` cells long.
    *
    * Generally, you shouldn't pass in an argument into cells as there is an
    * (expected) fixed number of columns.
@@ -53,6 +60,14 @@ class view_expenses_page
    * @param cells Number of cells the horizontal row occupies.
    */
   void render_horizontal_rule(std::ostream &cout, uint64_t cells = 4) const;
+
+  /**
+   * @brief Helper function to sort rows according to the state.
+   *
+   * @param state
+   * @param table_rows
+   */
+  static void sort_rows(const state &state, std::vector<expense> &table_rows);
 
 public:
   explicit view_expenses_page(uint32_t table_cell_padding);

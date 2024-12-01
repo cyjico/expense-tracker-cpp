@@ -25,6 +25,12 @@ bool date::is_valid() const {
   return day >= 1 && day <= max_days && month >= 1 && month <= max_months;
 }
 
+bool date::operator==(const date &other) const {
+  return year == other.year && month == other.month && day == other.day;
+}
+
+bool date::operator!=(const date &other) const { return !(*this == other); }
+
 bool date::operator<(const date &other) const {
   if (year != other.year) {
     return year < other.year;
@@ -32,7 +38,6 @@ bool date::operator<(const date &other) const {
   if (month != other.month) {
     return month < other.month;
   }
-
   return day < other.day;
 }
 
@@ -43,8 +48,15 @@ bool date::operator>(const date &other) const {
   if (month != other.month) {
     return month > other.month;
   }
-
   return day > other.day;
+}
+
+bool date::operator<=(const date &other) const {
+  return *this < other || *this == other;
+}
+
+bool date::operator>=(const date &other) const {
+  return *this > other || *this == other;
 }
 
 date date::from_string(const std::string &date_str) {

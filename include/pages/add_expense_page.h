@@ -17,6 +17,10 @@ class add_expense_page : public abstract_page {
     prompt_desc,
     end,
   };
+
+  /**
+   * @brief Represents the state of the page.
+   */
   state m_state = state::prompt_date;
   std::string m_alert_msg;
 
@@ -25,6 +29,10 @@ class add_expense_page : public abstract_page {
    */
   expense m_expense;
 
+  std::string handle_input(application &app, const std::string &inp);
+
+  static void display_prompt(const application &app, std::ostream &cout,
+                             const state &state);
   static std::pair<std::string, date> validate_date(const std::string &inp);
   static std::pair<std::string, std::string>
   validate_category(const application &app, const std::string &inp);
@@ -35,9 +43,4 @@ public:
 
   update_action update(application &app, std::ostream &cout,
                        std::istream &cin) override;
-
-  std::string handle_input(application &app, const std::string &inp);
-
-  static void display_prompt(const application &app, std::ostream &cout,
-                             const state &state);
 };

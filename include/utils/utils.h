@@ -1,5 +1,4 @@
 #pragma once
-#include <cstdint>
 #include <iostream>
 #include <string>
 
@@ -16,8 +15,8 @@ bool try_flush_failed_istream(std::istream &cin);
 void clear_screen(std::ostream &cout);
 
 std::string trim_string(const std::string &str);
-std::string double_to_string(const double &value, const uint32_t &precision = 2,
-                             const bool &has_separator = true);
+std::string double_to_string(const double &value, const int &precision = 2,
+                             const bool &include_separator = true);
 
 /**
  * @brief Computes the Jaro-Winkler similarity between two strings.

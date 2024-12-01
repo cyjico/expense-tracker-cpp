@@ -9,7 +9,6 @@
 #include <fstream>
 #include <iostream>
 #include <ostream>
-#include <set>
 #include <sstream>
 #include <string>
 #include <unordered_set>
@@ -31,7 +30,7 @@ void home_page::attach_listeners(application &app) {
 
     if (!evt.app->has_shared_datum("expenses")) {
       // Initialize the expenses and valid_categories in shared_data
-      auto expenses = std::multiset<expense>();
+      application::expense_datum expenses;
       auto valid_categories = std::unordered_set<std::string>(
           {"Food", "Transportation", "Rent", "Miscellaneous"});
 
@@ -115,10 +114,11 @@ update_action home_page::update(application &app, std::ostream &cout,
     }
 
     const auto &expenses =
-        app.at_shared_datum<std::multiset<expense>>("expenses");
+        app.at_shared_datum<application::expense_datum>("expenses");
     for (const auto &expense : expenses) {
       out_file << expense.date.to_string() << delimiter << expense.category
-               << delimiter << utils::double_to_string(expense.amount, 0, false)
+               << delimiter
+               << utils::double_to_string(expense.amount, -1, false)
                << delimiter << expense.desc << '\n';
     }
 

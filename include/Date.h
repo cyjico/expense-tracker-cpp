@@ -34,8 +34,12 @@ struct date {
   std::string to_string() const;
   bool is_valid() const;
 
+  bool operator==(const date &other) const;
+  bool operator!=(const date &other) const;
   bool operator<(const date &other) const;
   bool operator>(const date &other) const;
+  bool operator>=(const date &other) const;
+  bool operator<=(const date &other) const;
 
   /**
    * @brief Creates a date from "dd/mm/yyyy".

@@ -1,7 +1,6 @@
 #include "utils/utils.h"
 #include <algorithm>
 #include <cstddef>
-#include <cstdint>
 #include <iostream>
 #include <limits>
 #include <string>
@@ -37,33 +36,34 @@ std::string utils::trim_string(const std::string &str) {
 }
 
 // NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
-std::string utils::double_to_string(const double &value,
-                                    const uint32_t &precision,
-                                    const bool &has_separator) {
-  std::string result = std::to_string(value);
+std::string utils::double_to_string(const double &value, const int &precision,
+                                    const bool &include_separator) {
+  std::string str = std::to_string(value);
 
-  auto decimal_pos = result.find('.');
-  if (decimal_pos != std::string::npos) {
-    result.erase(result.find_last_not_of('0') + 1);
+  size_t decimal_pos = str.rfind('.');
+  if (precision >= 0 && decimal_pos != std::string::npos) {
+    // remove trailing zeros/decimal point
+    str.erase(str.find_last_not_of('0') + 1);
 
-    if (result.back() == '.') {
-      result.pop_back();
-    } else if (precision > 0) {
-      result.resize(decimal_pos + (1 + precision));
+    if (str.back() != '.') {
+      str.resize(decimal_pos + (1 + precision));
+    } else {
+      decimal_pos = std::string::npos;
+
+      str.pop_back();
     }
   }
 
-  if (has_separator && result.length() > 3) {
-    const size_t pos = result.find('.');
-    const int insert_pos = static_cast<int>(
-        pos == std::string::npos ? static_cast<int>(result.length()) : pos);
+  if (include_separator && str.length() > 3) {
+    size_t insert_pos =
+        (decimal_pos == std::string::npos ? str.length() : decimal_pos) - 3;
 
-    for (int i = insert_pos - 3; i > 0; i -= 3) {
-      result.insert(i, ",");
+    for (; insert_pos > 0; insert_pos -= 3) {
+      str.insert(insert_pos, ",");
     }
   }
 
-  return result;
+  return str;
 }
 
 // Implementation taken from

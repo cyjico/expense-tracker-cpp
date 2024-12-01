@@ -10,6 +10,10 @@ class generate_report_page : public abstract_page {
     prompt,
     end,
   };
+
+  /**
+   * @brief Represents the state of the page.
+   */
   state m_state = state::prompt;
   std::string m_alert_msg;
 
@@ -21,7 +25,8 @@ public:
   update_action update(application &app, std::ostream &cout,
                        std::istream &cin) override;
 
+  std::string handle_input(application &app, const std::string &inp);
+
   static void display_prompt(application &app, std::ostream &cout,
                              const state &state, const date &date);
-  std::string handle_input(application &app, const std::string &inp);
 };

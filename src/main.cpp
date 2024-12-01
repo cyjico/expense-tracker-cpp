@@ -19,6 +19,7 @@ int main() {
       std::make_shared<view_expenses_page>(view_expenses_page(4));
   view_expenses_page_ptr->attach_listeners(app);
 
+  // Setup the page routes
   app.initialize(
       {{"/", home_page_ptr},
        {"/add-expense", std::make_shared<add_expense_page>(add_expense_page())},

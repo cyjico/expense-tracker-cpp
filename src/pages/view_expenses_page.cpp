@@ -17,12 +17,22 @@
 #include <utility>
 #include <vector>
 
+void view_expenses_page::render_cell(std::ostream &cout,
+                                     const std::string &text) const {
+  const auto times = m_table_cell_width - text.length() + m_table_cell_padding;
+  cout << text << std::string(times, ' ');
+}
+
+void view_expenses_page::render_horizontal_rule(std::ostream &cout,
+                                                uint64_t cells) const {
+  cout << std::string(static_cast<size_t>(
+                          (m_table_cell_width + m_table_cell_padding) * cells),
+                      '-')
+       << '\n';
+}
+
 void view_expenses_page::sort_rows(const state &state,
                                    std::vector<expense> &table_rows) {
-  /*
-   * Why std::vector?
-   * std::sort requires containers that support random access iterators
-   */
   switch (state) {
   case state::show_sort_by_date:
     break;
@@ -43,19 +53,7 @@ void view_expenses_page::sort_rows(const state &state,
   }
 }
 
-void view_expenses_page::render_cell(std::ostream &cout,
-                                     const std::string &text) const {
-  const auto times = m_table_cell_width - text.length() + m_table_cell_padding;
-  cout << text << std::string(times, ' ');
-}
-
-void view_expenses_page::render_horizontal_rule(std::ostream &cout,
-                                                uint64_t cells) const {
-  cout << std::string(static_cast<size_t>(
-                          (m_table_cell_width + m_table_cell_padding) * cells),
-                      '-')
-       << '\n';
-}
+// --- public ---
 
 view_expenses_page::view_expenses_page(uint32_t table_cell_padding)
     : m_table_cell_padding(table_cell_padding) {}
@@ -72,11 +70,11 @@ void view_expenses_page::attach_listeners(application &app) {
      * Then, as it follows, we SHOULD throw an error if the page was
      * unexpectedly loaded before `home_page`.
      */
-    const std::multiset<expense> &expenses =
-        evt.app->at_shared_datum<std::multiset<struct expense>>("expenses");
+    const auto &expenses =
+        evt.app->at_shared_datum<application::expense_datum>("expenses");
 
     // Retrieve maximum cell width
-    m_table_cell_width = 15;
+    m_table_cell_width = 15; // 15 is the default because
     for (const auto &expense : expenses) {
       m_table_cell_width = std::max<uint64_t>(
           {static_cast<uint64_t>(m_table_cell_width),
@@ -150,8 +148,8 @@ update_action view_expenses_page::update(application &app, std::ostream &cout,
   m_prev_state = m_state;
   m_state = static_cast<state>(desired_state);
 
-  const std::multiset<expense> &expenses =
-      app.at_shared_datum<std::multiset<expense>>("expenses");
+  const auto &expenses =
+      app.at_shared_datum<application::expense_datum>("expenses");
 
   m_table_rows = std::vector<expense>(expenses.begin(), expenses.end());
 
@@ -159,6 +157,8 @@ update_action view_expenses_page::update(application &app, std::ostream &cout,
   case state::show_sort_by_date:
   case state::show_sort_by_amount:
   case state::show_sort_by_category:
+    // Why std::vector?
+    // std::sort requires containers that support random access iterators
     sort_rows(m_state, m_table_rows);
     break;
   case state::end:

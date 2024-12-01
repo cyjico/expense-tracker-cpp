@@ -8,7 +8,6 @@
 #include <cstddef>
 #include <exception>
 #include <iostream>
-#include <set>
 #include <sstream>
 #include <string>
 #include <unordered_map>
@@ -89,7 +88,7 @@ by_category_page::find_expenses_under_a_category(const application &app,
       "Expenses under category \"" + category_itr->second + "\" are:\n";
 
   const auto &expenses =
-      app.at_shared_datum<const std::multiset<expense>>("expenses");
+      app.at_shared_datum<application::expense_datum>("expenses");
   for (const auto &expense : expenses) {
     if (expense.category != category_itr->second) {
       continue;
@@ -240,7 +239,7 @@ by_category_page::sum_expenses_by_category_in_datetime(const application &app,
                                                        const std::string &month,
                                                        const std::string &day) {
   const auto &expenses =
-      app.at_shared_datum<const std::multiset<expense>>("expenses");
+      app.at_shared_datum<application::expense_datum>("expenses");
   std::unordered_map<std::string, double> result;
 
   for (const auto &expense : expenses) {

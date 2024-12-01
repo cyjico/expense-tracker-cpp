@@ -7,7 +7,6 @@
 #include <algorithm>
 #include <exception>
 #include <iostream>
-#include <set>
 #include <string>
 #include <unordered_map>
 #include <utility>
@@ -120,7 +119,7 @@ by_datetime_page::sum_expenses_by_datetime(const application &app,
                                            const bool &has_month,
                                            const bool &has_day) {
   const auto &expenses =
-      app.at_shared_datum<std::multiset<expense>>("expenses");
+      app.at_shared_datum<application::expense_datum>("expenses");
   std::unordered_map<std::string, double> result;
 
   for (const auto &expense : expenses) {

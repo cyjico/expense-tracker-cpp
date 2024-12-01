@@ -10,10 +10,7 @@ expense::expense(struct date date, std::string category, double amount,
     : date(date), category(std::move(category)), amount(amount),
       desc(std::move(desc)) {}
 
-bool expense::operator<(const expense &other) const {
-  return date < other.date;
-}
-
-bool expense::operator>(const expense &other) const {
-  return date > other.date;
+bool expense::date_comparator::operator()(const expense &lhs,
+                                          const expense &rhs) const {
+  return lhs.date < rhs.date;
 }
