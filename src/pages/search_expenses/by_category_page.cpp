@@ -29,13 +29,13 @@ constexpr const char *default_prompt =
 void by_category_page::handle_prompt(const application &app,
                                      const std::string &inp) {
   switch (m_selected_option) {
-  case 1:
+  case option::find_expenses_under_category:
     m_state = find_expenses_under_a_category(app, inp);
     break;
-  case 2:
-  case 3:
-  case 4:
-    m_state = find_category_with_highest_expense_in_timeframe(app, inp);
+  case option::find_category_with_highest_expense_in_day:
+  case option::find_category_with_highest_expense_in_month:
+  case option::find_category_with_highest_expense_in_year:
+    m_state = find_category_with_highest_expense_in_datetime(app, inp);
     break;
   default:
     break;
@@ -105,27 +105,30 @@ by_category_page::find_expenses_under_a_category(const application &app,
 }
 
 by_category_page::state
-by_category_page::find_category_with_highest_expense_in_timeframe(
+by_category_page::find_category_with_highest_expense_in_datetime(
     const application &app, const std::string &inp) {
-  // Prompt for year
   auto year_itr = m_prompt_cache.find("year");
   if (year_itr == m_prompt_cache.end()) {
+    // Prompt for year
     m_prompt_message = "What year?\n\n";
     m_prompt_cache["year"] = "";
 
     return state::further_prompt;
   }
 
-  // Set year from the input
   if (year_itr->second.empty()) {
+    // Set year from the input
     if (!validate_datetime_input("Year", 4, 1, 9999, inp)) {
       return state::further_prompt;
     }
 
     m_prompt_cache["year"] = inp;
 
-    // Prompt for month if we selected month or day
-    if (m_selected_option == 3 || m_selected_option == 2) {
+    if (m_selected_option ==
+            option::find_category_with_highest_expense_in_month ||
+        m_selected_option ==
+            option::find_category_with_highest_expense_in_day) {
+      // Prompt for month
       m_prompt_message = "What month?\n\n";
       m_prompt_cache["month"] = "";
 
@@ -133,17 +136,21 @@ by_category_page::find_category_with_highest_expense_in_timeframe(
     }
   }
 
-  // Set month from the input if we selected month or day
-  if ((m_selected_option == 3 || m_selected_option == 2) &&
+  if ((m_selected_option ==
+           option::find_category_with_highest_expense_in_month ||
+       m_selected_option ==
+           option::find_category_with_highest_expense_in_day) &&
       m_prompt_cache["month"].empty()) {
+    // Set month from the input
     if (!validate_datetime_input("Month", 2, 1, 12, inp)) {
       return state::further_prompt;
     }
 
     m_prompt_cache["month"] = inp;
 
-    // Prompt for day if we selected day
-    if (m_selected_option == 2) {
+    if (m_selected_option ==
+        option::find_category_with_highest_expense_in_day) {
+      // Prompt for day
       m_prompt_message = "What day?\n\n";
       m_prompt_cache["day"] = "";
 
@@ -151,8 +158,9 @@ by_category_page::find_category_with_highest_expense_in_timeframe(
     }
   }
 
-  // Set day from the input if we selected day
-  if (m_selected_option == 2 && m_prompt_cache["day"].empty()) {
+  if (m_selected_option == option::find_category_with_highest_expense_in_day &&
+      m_prompt_cache["day"].empty()) {
+    // Set day from the input
     if (!validate_datetime_input("Day", 2, 1, 31, inp)) {
       return state::further_prompt;
     }
@@ -160,12 +168,12 @@ by_category_page::find_category_with_highest_expense_in_timeframe(
     m_prompt_cache["day"] = inp;
   }
 
-  std::unordered_map<std::string, double> categorical_expenses =
-      filter_expenses_by_date(app, m_prompt_cache["month"],
-                              m_prompt_cache["day"]);
+  std::unordered_map<std::string, double> categoried_expenses =
+      sum_expenses_by_category_in_datetime(app, m_prompt_cache["month"],
+                                           m_prompt_cache["day"]);
 
   auto max_iter = std::max_element(
-      categorical_expenses.begin(), categorical_expenses.end(),
+      categoried_expenses.begin(), categoried_expenses.end(),
       [](const auto &lhs, const auto &rhs) { return lhs.second < rhs.second; });
 
   std::stringstream buffer;
@@ -212,13 +220,22 @@ bool by_category_page::validate_datetime_input(const std::string &name,
 }
 // NOLINTEND(bugprone-easily-swappable-parameters)
 
+/**
+ * @brief Calculates the sums of expenses grouped by categories within the
+ * month/day.
+ *
+ * @param app
+ * @param month If empty, will include any month.
+ * @param day If empty, will include any day.
+ * @return
+ */
 std::unordered_map<std::string, double>
-by_category_page::filter_expenses_by_date(const application &app,
-                                          const std::string &month,
-                                          const std::string &day) {
+by_category_page::sum_expenses_by_category_in_datetime(const application &app,
+                                                       const std::string &month,
+                                                       const std::string &day) {
   const auto &expenses =
       app.at_shared_datum<const std::multiset<expense>>("expenses");
-  std::unordered_map<std::string, double> categorical_expenses;
+  std::unordered_map<std::string, double> result;
 
   for (const auto &expense : expenses) {
     if (!month.empty() && expense.date.month != std::stoi(month)) {
@@ -229,16 +246,17 @@ by_category_page::filter_expenses_by_date(const application &app,
       continue;
     }
 
-    categorical_expenses[expense.category] += expense.amount;
+    result[expense.category] += expense.amount;
   }
 
-  return categorical_expenses;
+  return result;
 }
 
 // --- public ---
 
 by_category_page::by_category_page()
-    : m_prompt_message(default_prompt), m_selected_option(0) {};
+    : m_prompt_message(default_prompt),
+      m_selected_option(option::find_expenses_under_category) {};
 
 update_action by_category_page::update(application &app, std::ostream &cout,
                                        std::istream &cin) {
@@ -261,7 +279,8 @@ update_action by_category_page::update(application &app, std::ostream &cout,
   switch (m_state) {
   case state::prompt:
     try {
-      m_selected_option = std::stoi(utils::trim_string(inp));
+      m_selected_option =
+          static_cast<option>(std::stoi(utils::trim_string(inp)));
     } catch (const std::exception &e) {
       break;
     }
@@ -279,7 +298,7 @@ update_action by_category_page::update(application &app, std::ostream &cout,
     m_prompt_message = default_prompt;
     m_prompt_cache.clear();
 
-    m_selected_option = 0;
+    m_selected_option = option::find_expenses_under_category;
 
     m_search_result = "";
     break;

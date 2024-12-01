@@ -4,7 +4,7 @@
 #include <string>
 #include <utility>
 
-expense::expense() : date(0, 0, 0), amount(0.0) {}
+expense::expense() : amount(0.0) {}
 
 expense::expense(struct date date, std::string category, double amount,
                  std::string desc)
