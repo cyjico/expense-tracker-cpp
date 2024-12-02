@@ -50,18 +50,15 @@ std::string utils::double_to_string(const double &value, const int &precision,
         str.resize(decimal_pos + (1 + precision));
       }
     } else {
-      decimal_pos = std::string::npos;
-
       str.pop_back();
     }
+  } else {
+    decimal_pos = str.length();
   }
 
-  if (include_separator && str.length() > 3) {
-    size_t insert_pos =
-        (decimal_pos == std::string::npos ? str.length() : decimal_pos) - 3;
-
-    for (; insert_pos > 0; insert_pos -= 3) {
-      str.insert(insert_pos, ",");
+  if (include_separator && decimal_pos > 3) {
+    for (int i = static_cast<int>(decimal_pos) - 3; i > 0; i -= 3) {
+      str.insert(i, ",");
     }
   }
 
