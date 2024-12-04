@@ -16,6 +16,7 @@ enum class update_action : std::uint8_t {
  */
 class abstract_page {
 public:
+  abstract_page() = default;
   virtual ~abstract_page() = default;
 
   /**
@@ -27,10 +28,14 @@ public:
    * @param app Reference to the application.
    * @param cout Reference to std::cout.
    * @param cin Reference to std::cin.
-   * @return
+   * @return Return what type of action the application does after the update
+   * function.
    */
   virtual update_action update(application &app, std::ostream &cout,
                                std::istream &cin) = 0;
+
+  abstract_page(const abstract_page &) = delete;
+  abstract_page &operator=(const abstract_page &) = delete;
 };
 // NOLINTEND(hicpp-special-member-functions)
 // NOLINTEND(cppcoreguidelines-special-member-functions)

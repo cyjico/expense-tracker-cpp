@@ -1,6 +1,8 @@
 #include "utils/utils.h"
 #include <algorithm>
+#include <cmath>
 #include <cstddef>
+#include <cstdint>
 #include <iostream>
 #include <limits>
 #include <string>
@@ -47,7 +49,7 @@ std::string utils::double_to_string(const double &value, const int &precision,
 
     if (str.back() != '.') {
       if (precision >= 0) {
-        str.resize(decimal_pos + (1 + precision));
+        str.resize(decimal_pos + static_cast<size_t>(1 + precision));
       }
     } else {
       str.pop_back();
@@ -58,12 +60,33 @@ std::string utils::double_to_string(const double &value, const int &precision,
 
   if (include_separator && decimal_pos > 3) {
     for (int i = static_cast<int>(decimal_pos) - 3; i > 0; i -= 3) {
-      str.insert(i, ",");
+      str.insert(static_cast<size_t>(i), ",");
     }
   }
 
   return str;
 }
+
+namespace {
+
+constexpr double winkler_scaling_factor = 0.1;
+
+double winkler(std::string lhs, std::string rhs) {
+  const size_t length = std::min({4ULL, lhs.length(), rhs.length()});
+  int prefix_matches = 0;
+
+  for (uint32_t i = 0; i < length; i++) {
+    if (lhs[i] != rhs[i]) {
+      break;
+    }
+
+    prefix_matches++;
+  }
+
+  return prefix_matches * winkler_scaling_factor;
+}
+
+} // namespace
 
 // Implementation taken from
 // https://www.geeksforgeeks.org/jaro-and-jaro-winkler-similarity/
@@ -72,20 +95,20 @@ double utils::jaro_winkler(const std::string &lhs, const std::string &rhs) {
     return 1.0;
   }
 
-  const int lhs_len = static_cast<int>(lhs.length());
-  const int rhs_len = static_cast<int>(rhs.length());
+  const auto lhs_len = static_cast<uint32_t>(lhs.length());
+  const auto rhs_len = static_cast<uint32_t>(rhs.length());
 
-  if (lhs_len == 0) {
-    return rhs_len == 0 ? 1.0 : 0.0;
+  if (lhs_len == 0 || rhs_len == 0) {
+    return 0;
   }
 
-  const int max_dist = std::max(lhs_len, rhs_len) / 2 - 1;
-  int matches = 0;
+  const uint32_t max_dist = std::max(lhs_len, rhs_len) / 2 - 1;
+  double matches = 0.0;
 
   std::vector<bool> lhs_hash(lhs_len, false);
   std::vector<bool> rhs_hash(rhs_len, false);
-  for (int i = 0; i < lhs_len; i++) {
-    for (int j = std::max(0, i - max_dist);
+  for (uint32_t i = 0; i < lhs_len; i++) {
+    for (uint32_t j = (i >= max_dist) ? (i - max_dist) : 0;
          j < std::min(rhs_len, i + max_dist + 1); j++) {
 
       if (lhs[i] == rhs[j] && !rhs_hash[j]) {
@@ -96,14 +119,14 @@ double utils::jaro_winkler(const std::string &lhs, const std::string &rhs) {
     }
   }
 
-  if (matches == 0) {
+  if (std::fabs(matches) < std::numeric_limits<double>::epsilon()) {
     return 0.0;
   }
 
   // Count transpositions
-  int transpositions = 0;
-  int point = 0;
-  for (int i = 0; i < lhs_len; i++) {
+  uint32_t transpositions = 0;
+  uint32_t point = 0;
+  for (uint32_t i = 0; i < lhs_len; i++) {
     if (lhs_hash[i]) {
       while (!rhs_hash[point]) {
         point++;
@@ -117,23 +140,9 @@ double utils::jaro_winkler(const std::string &lhs, const std::string &rhs) {
 
   transpositions /= 2;
 
-  const double jaro_similarity =
-      (matches / static_cast<double>(lhs_len) +
-       matches / static_cast<double>(rhs_len) +
-       (matches - transpositions) / static_cast<double>(matches)) /
-      3.0;
+  const double jaro_similarity = (matches / lhs_len + matches / rhs_len +
+                                  (matches - transpositions) / matches) /
+                                 3.0;
 
-  // Winkler (bias in prefix similarity)
-  constexpr double winkler_scaling_factor = 0.1;
-  int prefix_length = 0;
-  for (int i = 0; i < std::min({4, lhs_len, rhs_len}); i++) {
-    if (lhs[i] == rhs[i]) {
-      prefix_length++;
-    } else {
-      break;
-    }
-  }
-
-  return jaro_similarity +
-         prefix_length * winkler_scaling_factor * (1 - jaro_similarity);
+  return jaro_similarity + winkler(lhs, rhs) * (1 - jaro_similarity);
 }

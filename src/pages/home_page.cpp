@@ -86,7 +86,7 @@ update_action home_page::update(application &app, std::ostream &cout,
   int option = 0;
   try {
     option = std::stoi(utils::trim_string(inp));
-  } catch (const std::exception &e) {
+  } catch (const std::exception &) {
     return update_action::none;
   }
 

@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <exception>
 #include <iostream>
+#include <stdexcept>
 #include <string>
 #include <unordered_map>
 #include <utility>
@@ -32,6 +33,7 @@ void by_datetime_page::display_prompt(const application & /*app*/,
     cout << m_prompt_message;
     break;
   case state::end:
+  default:
     cout << m_search_result << "\n\nPress enter to return to the main menu.";
     break;
   }
@@ -45,7 +47,7 @@ namespace {
  *
  * Helper function used to group expenses by the date using the key calculated.
  *
- * @param date
+ * @param date Date to base from for generating the datetime key.
  * @param has_month If true, will include month.
  * @param has_day If true, even if `has_month` is false, will also include
  * month.
@@ -78,6 +80,9 @@ void by_datetime_page::handle_prompt(const application &app,
   case option::find_year_with_highest_expense:
     m_state = find_datetime_with_highest_expense(app);
     break;
+  default:
+    // For safety!
+    throw std::runtime_error("How did you get here?");
   }
 }
 
@@ -108,7 +113,7 @@ by_datetime_page::find_datetime_with_highest_expense(const application &app) {
 /**
  * @brief Sums expenses based on the datetime.
  *
- * @param app
+ * @param app Reference to the application.
  * @param has_month If true, will sum the expenses by month and year.
  * @param has_day If true, even if `has_month` is false, will sum the expenses
  * by the day, month, and year.
@@ -150,15 +155,16 @@ update_action by_datetime_page::update(application &app, std::ostream &cout,
     try {
       m_selected_option =
           static_cast<option>(std::stoi(utils::trim_string(inp)));
-    } catch (const std::exception &e) {
+    } catch (const std::exception &) {
       break;
     }
 
-    // DON'T add a `break;` because fall-through is intended!
+    [[fallthrough]];
   case state::further_prompt:
     handle_prompt(app, inp);
     break;
   case state::end:
+  default:
     app.redirect("/");
 
     // Reset variables for the next time the page is loaded

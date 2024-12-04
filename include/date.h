@@ -1,6 +1,5 @@
 #pragma once
 #include <cstdint>
-#include <cstdio>
 #include <stdexcept>
 #include <string>
 
@@ -29,7 +28,7 @@ struct date {
   uint16_t year;
 
   date();
-  date(uint8_t day, uint8_t month, uint16_t year);
+  date(uint8_t param_day, uint8_t param_month, uint16_t param_year);
 
   std::string to_string() const;
   bool is_valid() const;
@@ -46,9 +45,11 @@ struct date {
    *
    * It does not check if the values are within logical range.
    *
-   * @param date_str
-   * @return
+   * @param date_str String to convert into a date instance.
+   * @return Date instanced created from the string.
    * @throws std::runtime_error if it does not follow "dd/mm/yyyy".
+   * std::runtime_error if the "dd" or "mm" exceeds 255 or under 0.
+   * std::runtime_error if "yyyy" exceeds 65535 or under 0.
    */
   static date from_string(const std::string &date_str);
 

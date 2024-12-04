@@ -40,8 +40,8 @@ public:
   /**
    * @brief Retrieves a datum via key.
    *
-   * @param key
-   * @return
+   * @param key Key of the shared datum.
+   * @return Reference to the retrieved datum.
    * @throws std::out_of_range if no such datum is present. std::runtime_error
    * if the datum could not be casted to the requested type.
    */
@@ -60,10 +60,11 @@ public:
   /**
    * @brief Attempts to insert a datum.
    *
-   * Function initially tries to insert but, if it fails, will assign instead.
+   * Inserts a datum by the key. If it fails, it will assign instead the
+   * pre-existing datum with the new datum.
    *
-   * @param key
-   * @param value
+   * @param key Key of the datum.
+   * @param value Value of the datum.
    * @return If it has successfully inserted the datum.
    */
   template <typename T>
@@ -87,9 +88,9 @@ public:
 template <typename T> T &application::at_shared_datum(const std::string &key) {
   try {
     return std::any_cast<T &>(m_shared_data.at(key));
-  } catch (const std::bad_any_cast &e) {
+  } catch (const std::bad_any_cast &) {
     throw std::runtime_error("Failed to cast the datum to the requested type.");
-  } catch (const std::out_of_range &e) {
+  } catch (const std::out_of_range &) {
     throw std::runtime_error(R"(Datum with key ")" + key +
                              R"(" does not exist.)");
   }
@@ -99,9 +100,9 @@ template <typename T>
 const T &application::at_shared_datum(const std::string &key) const {
   try {
     return std::any_cast<const T &>(m_shared_data.at(key));
-  } catch (const std::bad_any_cast &e) {
+  } catch (const std::bad_any_cast &) {
     throw std::runtime_error("Failed to cast the datum to the requested type.");
-  } catch (const std::out_of_range &e) {
+  } catch (const std::out_of_range &) {
     throw std::runtime_error(R"(Datum with key ")" + key +
                              R"(" does not exist.)");
   }

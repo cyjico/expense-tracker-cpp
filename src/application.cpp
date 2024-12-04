@@ -25,10 +25,11 @@ void application::run_indefinitely() {
     auto page = m_pages.at(m_cur_address);
 
     switch (action) {
-    case update_action::none:
-      break;
     case update_action::exit_app:
       return;
+    case update_action::none:
+    default:
+      break;
     }
 
     action = page->update(*this, std::cout, std::cin);

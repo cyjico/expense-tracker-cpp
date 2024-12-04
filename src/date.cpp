@@ -8,8 +8,8 @@ date::date() : day(1), month(1), year(0) {}
 
 // Skill issue if you swap these parameters
 // NOLINTBEGIN(bugprone-easily-swappable-parameters)
-date::date(uint8_t day, uint8_t month, uint16_t year)
-    : day(day), month(month), year(year) {}
+date::date(uint8_t param_day, uint8_t param_month, uint16_t param_year)
+    : day(param_day), month(param_month), year(param_year) {}
 // NOLINTEND(bugprone-easily-swappable-parameters)
 
 std::string date::to_string() const {
@@ -73,9 +73,18 @@ date date::from_string(const std::string &date_str) {
     throw std::runtime_error(R"(Invalid date format: expected "dd/mm/yyyy")");
   }
 
-  date.day = std::stoi(day_str);
-  date.month = std::stoi(month_str);
-  date.year = std::stoi(year_str);
+  const int day = std::stoi(day_str);
+  const int month = std::stoi(month_str);
+  const int year = std::stoi(year_str);
+
+  if (day < 0 || day > 255 || month < 0 || month > 255 || year < 0 ||
+      year > 65535) {
+    throw std::runtime_error("Invalid date values.");
+  }
+
+  date.day = static_cast<uint8_t>(day);
+  date.month = static_cast<uint8_t>(month);
+  date.year = static_cast<uint8_t>(year);
   return date;
 }
 

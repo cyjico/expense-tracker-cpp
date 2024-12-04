@@ -4,10 +4,10 @@
 
 expense::expense() : amount(0.0) {}
 
-expense::expense(date_alias date, std::string category, double amount,
-                 std::string desc)
-    : date(date), category(std::move(category)), amount(amount),
-      desc(std::move(desc)) {}
+expense::expense(date_alias param_date, std::string param_category,
+                 double param_amount, std::string param_desc)
+    : date(param_date), category(std::move(param_category)),
+      amount(param_amount), desc(std::move(param_desc)) {}
 
 bool expense::date_comparator::operator()(const expense &lhs,
                                           const expense &rhs) const {

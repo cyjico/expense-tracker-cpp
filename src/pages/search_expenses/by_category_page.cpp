@@ -6,6 +6,7 @@
 #include "utils/utils.h"
 #include <algorithm>
 #include <cstddef>
+#include <cstdint>
 #include <exception>
 #include <iostream>
 #include <sstream>
@@ -172,9 +173,15 @@ by_category_page::find_category_with_highest_expense_in_datetime(
                                            m_prompt_cache["day"]);
 
   const std::string name = date::get_name(
-      m_prompt_cache["day"].empty() ? 0 : std::stoi(m_prompt_cache["day"]),
-      m_prompt_cache["month"].empty() ? 0 : std::stoi(m_prompt_cache["month"]),
-      m_prompt_cache["year"].empty() ? 0 : std::stoi(m_prompt_cache["year"]));
+      m_prompt_cache["day"].empty()
+          ? 0
+          : static_cast<uint8_t>(std::stoi(m_prompt_cache["day"])),
+      m_prompt_cache["month"].empty()
+          ? 0
+          : static_cast<uint8_t>(std::stoi(m_prompt_cache["month"])),
+      m_prompt_cache["year"].empty()
+          ? 0
+          : static_cast<uint8_t>(std::stoi(m_prompt_cache["year"])));
 
   if (categoried_expenses.empty()) {
     m_search_result = "Found no expenses during " + name;
@@ -210,7 +217,7 @@ bool by_category_page::validate_datetime_input(const std::string &name,
   int int_input = 0;
   try {
     int_input = std::stoi(inp);
-  } catch (const std::exception &e) {
+  } catch (const std::exception &) {
     m_prompt_message = "Please input a number. Try again.\n\n";
     return false;
   }
@@ -229,10 +236,11 @@ bool by_category_page::validate_datetime_input(const std::string &name,
  * @brief Calculates the sums of expenses grouped by categories within the
  * month/day.
  *
- * @param app
+ * @param app Reference to the application.
  * @param month If empty, will include any month.
  * @param day If empty, will include any day.
- * @return
+ * @return Sum of the expenses grouped by category within the datetime
+ * specified.
  */
 std::unordered_map<std::string, double>
 by_category_page::sum_expenses_by_category_in_datetime(const application &app,
@@ -273,6 +281,7 @@ update_action by_category_page::update(application &app, std::ostream &cout,
     cout << m_prompt_message;
     break;
   case state::end:
+  default:
     cout << m_search_result << "\n\nPress enter to return to the main menu.";
     break;
   }
@@ -286,15 +295,17 @@ update_action by_category_page::update(application &app, std::ostream &cout,
     try {
       m_selected_option =
           static_cast<option>(std::stoi(utils::trim_string(inp)));
-    } catch (const std::exception &e) {
+    } catch (const std::exception &) {
+      // NOTE: Allow the user to input again.
       break;
     }
 
-    // DON'T add a `break;` because fall-through is intended!
+    [[fallthrough]];
   case state::further_prompt:
     handle_prompt(app, inp);
     break;
   case state::end:
+  default:
     app.redirect("/");
 
     // Reset variables for the next time the page is loaded

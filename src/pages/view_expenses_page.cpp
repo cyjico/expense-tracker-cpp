@@ -49,6 +49,7 @@ void view_expenses_page::sort_rows(const state &state,
               });
     break;
   case state::end:
+  default:
     throw std::runtime_error("Cannot sort table_rows when state is state::end");
   }
 }
@@ -57,6 +58,8 @@ void view_expenses_page::sort_rows(const state &state,
 
 view_expenses_page::view_expenses_page(uint32_t table_cell_padding)
     : m_table_cell_padding(table_cell_padding) {}
+
+constexpr uint32_t default_table_cell_width = 15;
 
 void view_expenses_page::attach_listeners(application &app) {
   app.onpageload().add_listener([this](page_event evt) -> void {
@@ -74,13 +77,12 @@ void view_expenses_page::attach_listeners(application &app) {
         evt.app->at_shared_datum<application::expense_datum>("expenses");
 
     // Retrieve maximum cell width
-    m_table_cell_width = 15; // 15 is the default because
+    m_table_cell_width = default_table_cell_width;
     for (const auto &expense : expenses) {
-      m_table_cell_width = std::max<uint64_t>(
-          {static_cast<uint64_t>(m_table_cell_width),
-           expense.date.to_string().length(), expense.category.length(),
+      m_table_cell_width = static_cast<uint32_t>(std::max(
+          {expense.date.to_string().length(), expense.category.length(),
            utils::double_to_string(expense.amount).length(),
-           expense.desc.length()});
+           expense.desc.length(), static_cast<size_t>(m_table_cell_width)}));
     }
 
     std::swap(m_prev_state, m_state);
@@ -162,6 +164,7 @@ update_action view_expenses_page::update(application &app, std::ostream &cout,
     sort_rows(m_state, m_table_rows);
     break;
   case state::end:
+  default:
     app.redirect("/");
     break;
   }

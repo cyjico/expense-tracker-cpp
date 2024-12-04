@@ -6,7 +6,6 @@
 #include <memory>
 #include <ostream>
 #include <string>
-#include <utility>
 #include <vector>
 
 class view_expenses_page
@@ -36,17 +35,10 @@ class view_expenses_page
 
   /**
    * @brief Display a cell unto `cout` with proper spacing and padding.
-   *
-   * @param cout
-   * @param text
    */
   void render_cell(std::ostream &cout, const std::string &text) const;
   /**
    * @brief Display a whole row of cells.
-   *
-   * @tparam Args
-   * @param cout
-   * @param args
    */
   template <typename... Args>
   void render_row(std::ostream &cout, const Args &&...args) const;
@@ -56,7 +48,7 @@ class view_expenses_page
    * Generally, you shouldn't pass in an argument into cells as there is an
    * (expected) fixed number of columns.
    *
-   * @param cout
+   * @param cout Reference to the console output stream.
    * @param cells Number of cells the horizontal row occupies.
    */
   void render_horizontal_rule(std::ostream &cout, uint64_t cells = 4) const;
@@ -64,8 +56,8 @@ class view_expenses_page
   /**
    * @brief Helper function to sort rows according to the state.
    *
-   * @param state
-   * @param table_rows
+   * @param state State to based the sorting order.
+   * @param table_rows Rows of the table to be sorted.
    */
   static void sort_rows(const state &state, std::vector<expense> &table_rows);
 

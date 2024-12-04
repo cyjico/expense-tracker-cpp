@@ -8,11 +8,7 @@
 namespace search_expenses {
 
 class by_datetime_page : public abstract_page {
-  enum class state : uint8_t {
-    prompt,
-    further_prompt,
-    end,
-  };
+  enum class state : uint8_t { prompt, further_prompt, end };
   state m_state = state::prompt;
 
   std::string m_prompt_message;

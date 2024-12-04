@@ -10,11 +10,7 @@
 namespace search_expenses {
 
 class by_category_page : public abstract_page {
-  enum class state : uint8_t {
-    prompt,
-    further_prompt,
-    end,
-  };
+  enum class state : uint8_t { prompt, further_prompt, end };
   state m_state = state::prompt;
 
   std::string m_prompt_message;
@@ -23,7 +19,7 @@ class by_category_page : public abstract_page {
     find_expenses_under_category = 1,
     find_category_with_highest_expense_in_day,
     find_category_with_highest_expense_in_month,
-    find_category_with_highest_expense_in_year,
+    find_category_with_highest_expense_in_year
   };
   option m_selected_option;
   std::string m_search_result;

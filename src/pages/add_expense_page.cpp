@@ -4,6 +4,7 @@
 #include "expense.h"
 #include "pages/abstract_page.h"
 #include "utils/utils.h"
+#include <cstdint>
 #include <iostream>
 #include <regex>
 #include <set>
@@ -105,9 +106,9 @@ add_expense_page::validate_date(const std::string &inp) {
     return std::make_pair("Invalid date format.\n", second);
   }
 
-  second.day = std::stoi(match[1].str());
-  second.month = std::stoi(match[2].str());
-  second.year = std::stoi(match[3].str());
+  second.day = static_cast<uint8_t>(std::stoi(match[1].str()));
+  second.month = static_cast<uint8_t>(std::stoi(match[2].str()));
+  second.year = static_cast<uint8_t>(std::stoi(match[3].str()));
 
   if (!second.is_valid()) {
     return std::make_pair("Invalid date range.\n", second);

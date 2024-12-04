@@ -4,6 +4,7 @@
 #include "expense.h"
 #include "pages/abstract_page.h"
 #include "utils/utils.h"
+#include <cstdint>
 #include <ios>
 #include <istream>
 #include <ostream>
@@ -38,8 +39,8 @@ std::string generate_report_page::handle_input(application &app,
       return "Invalid date format.\n";
     }
 
-    m_date.month = std::stoi(match[1].str());
-    m_date.year = std::stoi(match[2].str());
+    m_date.month = static_cast<uint8_t>(std::stoi(match[1].str()));
+    m_date.year = static_cast<uint8_t>(std::stoi(match[2].str()));
 
     if (!m_date.is_valid()) {
       return "Invalid date range.\n";
