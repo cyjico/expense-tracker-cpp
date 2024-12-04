@@ -6,7 +6,7 @@
  * @brief Data representation of an expense.
  */
 struct expense {
-  using date_alias = struct date;
+  using date_alias = date;
 
   date_alias date;
   std::string category;
