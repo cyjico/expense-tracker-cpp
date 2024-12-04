@@ -59,6 +59,14 @@ add_executable(${PROJECT_NAME} ${SRC_FILES})
 
 target_compile_options(${PROJECT_NAME} PRIVATE -Wall)
 
+if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang"
+   AND CMAKE_CXX_COMPILER_FRONTEND_VARIANT STREQUAL "MSVC")
+  target_compile_options(
+    ${PROJECT_NAME}
+    PRIVATE -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-c++03-compat
+            -Wno-c++03-compat-pedantic -Wno-covered-switch-default)
+endif()
+
 # Setup clang-format
 find_program(CLANG_FORMAT_BIN clang-format)
 if(CLANG_FORMAT_BIN)
