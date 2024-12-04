@@ -15,7 +15,7 @@
 namespace {
 
 [[noreturn]]
-void main_terminate_handler() {
+void main_terminate_handler() noexcept {
   std::cerr << "Unhandled exception! Terminating program." << '\n';
 
   // Output exception into an error.log file.
