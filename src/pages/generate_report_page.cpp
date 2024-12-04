@@ -31,7 +31,7 @@ std::string generate_report_page::handle_input(application &app,
                                                const std::string &inp) {
   switch (m_state) {
   case state::prompt: {
-    const std::regex patt(R"(^([0-9]?[0-9])\/([0-9]?[0-9])\/([0-9]{1,4})$)");
+    const std::regex patt(R"(^([0-9]?[0-9])\/([0-9]{1,4})$)");
     std::smatch match;
 
     if (!std::regex_match(inp, match, patt)) {
