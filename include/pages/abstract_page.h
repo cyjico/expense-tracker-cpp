@@ -16,7 +16,6 @@ enum class update_action : std::uint8_t {
  */
 class abstract_page {
 public:
-  abstract_page() = default;
   virtual ~abstract_page() = default;
 
   /**
@@ -33,9 +32,6 @@ public:
    */
   virtual update_action update(application &app, std::ostream &cout,
                                std::istream &cin) = 0;
-
-  abstract_page(const abstract_page &) = delete;
-  abstract_page &operator=(const abstract_page &) = delete;
 };
 // NOLINTEND(hicpp-special-member-functions)
 // NOLINTEND(cppcoreguidelines-special-member-functions)
