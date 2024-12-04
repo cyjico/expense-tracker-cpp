@@ -2,12 +2,12 @@
 #include "date.h"
 #include <string>
 
+using date_alias = date;
+
 /**
  * @brief Data representation of an expense.
  */
 struct expense {
-  using date_alias = date;
-
   date_alias date;
   std::string category;
   double amount;
