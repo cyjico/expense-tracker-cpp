@@ -77,7 +77,8 @@ update_action home_page::update(application &app, std::ostream &cout,
           "2. View Expenses\n"
           "3. Search Expenses\n"
           "4. Generate Monthly Report\n"
-          "5. Save and Exit\n";
+          "5. Add Category\n"
+          "6. Save and Exit\n";
 
   std::string inp;
   std::getline(cin, inp);
@@ -89,7 +90,7 @@ update_action home_page::update(application &app, std::ostream &cout,
     return update_action::none;
   }
 
-  if (option < 1 || option > 5) {
+  if (option < 1 || option > 6) {
     return update_action::none;
   }
 
@@ -106,7 +107,10 @@ update_action home_page::update(application &app, std::ostream &cout,
   case 4:
     app.redirect("/generate-report");
     break;
-  case 5: {
+  case 5:
+    app.redirect("/add-category");
+    break;
+  case 6: {
     std::ofstream out_file(file_name);
     if (!out_file.is_open()) {
       break;

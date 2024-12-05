@@ -1,6 +1,7 @@
 #include "application.h"
 #include "events/page_event_emitter.h"
 #include "pages/abstract_page.h"
+#include "pages/add_category_page.h"
 #include "pages/add_expense_page.h"
 #include "pages/generate_report_page.h"
 #include "pages/home_page.h"
@@ -24,13 +25,14 @@ application::application() {
 
   m_pages = {{"/", home_page_ptr},
              {"/add-expense", std::make_shared<add_expense_page>()},
-             {"/view-expenses", view_expenses_page_ptr},
+             {"/add-category", std::make_shared<add_category_page>()},
              {"/generate-report", std::make_shared<generate_report_page>()},
              {"/search-expenses", std::make_shared<search_expenses_page>()},
              {"/search-expenses/by-category",
               std::make_shared<search_expenses::by_category_page>()},
              {"/search-expenses/by-datetime",
-              std::make_shared<search_expenses::by_datetime_page>()}};
+              std::make_shared<search_expenses::by_datetime_page>()},
+             {"/view-expenses", view_expenses_page_ptr}};
 }
 
 void application::run_indefinitely() {
