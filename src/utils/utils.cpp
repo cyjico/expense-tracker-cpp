@@ -71,7 +71,7 @@ namespace {
 
 constexpr double winkler_scaling_factor = 0.1;
 
-double winkler(std::string lhs, std::string rhs) {
+double winkler(const std::string &lhs, const std::string &rhs) {
   const size_t length =
       std::min({static_cast<size_t>(4ULL), lhs.length(), rhs.length()});
   int prefix_matches = 0;
