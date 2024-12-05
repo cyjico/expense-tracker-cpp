@@ -34,6 +34,7 @@ update_action add_category_page::update(application &app, std::ostream &cout,
 
   switch (m_state) {
   case state::prompt: {
+    // Check if input is empty
     if (inp.empty()) {
       m_alert_msg = "Category name can't be empty.\n";
       break;
@@ -43,19 +44,22 @@ update_action add_category_page::update(application &app, std::ostream &cout,
         app.at_shared_datum<application::valid_categories_datum>(
             "valid_categories");
 
+    // Case-insensitive check for pre-existing categories
     std::string inp_lower = inp;
-    std::transform(inp_lower.begin(), inp_lower.end(), inp_lower.begin(),
-                   std::tolower);
+    std::transform(
+        inp_lower.begin(), inp_lower.end(), inp_lower.begin(),
+        [](unsigned char param_char) { return std::tolower(param_char); });
 
-    auto itr = std::find_if(valid_categories.begin(), valid_categories.end(),
-                            [&inp_lower](const std::string &category) {
-                              std::string category_lower = category;
-                              std::transform(
-                                  category_lower.begin(), category_lower.end(),
-                                  category_lower.begin(), std::tolower);
-
-                              return category_lower == inp_lower;
-                            });
+    auto itr = std::find_if(
+        valid_categories.begin(), valid_categories.end(),
+        [&inp_lower](const std::string &category) {
+          std::string category_lower = category;
+          std::transform(category_lower.begin(), category_lower.end(),
+                         category_lower.begin(), [](unsigned char param_char) {
+                           return std::tolower(param_char);
+                         });
+          return category_lower == inp_lower;
+        });
     if (itr != valid_categories.end()) {
       m_alert_msg = "Category already exists as \"" + *itr + "\".\n";
       break;
