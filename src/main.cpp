@@ -1,4 +1,5 @@
 #include "application.h"
+#include "utils/utils.h"
 #include <cstdlib>
 #include <exception>
 #include <fstream>
@@ -10,25 +11,21 @@ namespace {
 void main_terminate_handler() noexcept {
   std::cerr << "Unhandled exception! Terminating program." << '\n';
 
-  // Output exception into an error.log file.
-  try {
-    const std::exception_ptr except = std::current_exception();
-    if (except) {
+  // Output exception into an .log file.
+  const std::exception_ptr except = std::current_exception();
+  if (except) {
+    try {
       std::rethrow_exception(except);
-    }
-  } catch (const std::exception &e) {
-    std::cerr << "Error: " << e.what() << '\n';
-
-    std::ofstream log_file("error.log", std::ios::app);
-    if (log_file) {
-      log_file << "Error: " << e.what() << '\n';
-    }
-  } catch (...) {
-    std::cerr << "Error: Unknown exception type" << '\n';
-
-    std::ofstream log_file("error.log", std::ios::app);
-    if (log_file) {
-      log_file << "Error: Unknown exception type\n";
+    } catch (const std::exception &e) {
+      std::ofstream log_file("etkcpp_error.log", std::ios::app);
+      if (log_file) {
+        log_file << "Error: " << e.what() << '\n';
+      }
+    } catch (...) {
+      std::ofstream log_file("etkcpp_error.log", std::ios::app);
+      if (log_file) {
+        log_file << "Error: Unknown exception type\n";
+      }
     }
   }
 
@@ -37,13 +34,13 @@ void main_terminate_handler() noexcept {
 
 } // namespace
 
-// NOLINTNEXTLINE(bugprone-exception-escape)
 int main() {
   std::set_terminate(main_terminate_handler);
 
   application app;
   app.run_indefinitely();
 
-  std::cout << "Reached end of program.";
+  utils::clear_screen(std::cout);
+  std::cout << "Reached end of program.\n\n";
   return 0;
 }
