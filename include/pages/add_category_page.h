@@ -9,6 +9,7 @@ class add_category_page : public abstract_page {
   state m_state = state::prompt;
 
   std::string m_alert_msg;
+
 public:
   add_category_page();
 
