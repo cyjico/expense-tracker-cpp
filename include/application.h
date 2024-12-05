@@ -7,6 +7,7 @@
 #include <stdexcept>
 #include <string>
 #include <unordered_map>
+#include <unordered_set>
 class abstract_page;
 
 using page_map =
@@ -22,10 +23,9 @@ class application {
 
 public:
   using expense_datum = std::multiset<expense, expense::date_comparator>;
+  using valid_categories_datum = std::unordered_set<std::string>;
 
   application();
-
-  void initialize(page_map pages);
 
   void run_indefinitely();
   void redirect(const std::string &new_address);

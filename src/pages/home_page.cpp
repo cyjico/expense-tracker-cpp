@@ -11,7 +11,6 @@
 #include <ostream>
 #include <sstream>
 #include <string>
-#include <unordered_set>
 
 namespace {
 
@@ -31,8 +30,8 @@ void home_page::attach_listeners(application &app) {
     if (!evt.app->has_shared_datum("expenses")) {
       // Initialize the expenses and valid_categories in shared_data
       application::expense_datum expenses;
-      auto valid_categories = std::unordered_set<std::string>(
-          {"Food", "Transportation", "Rent", "Miscellaneous"});
+      application::valid_categories_datum valid_categories = {
+          "Food", "Transportation", "Rent", "Miscellaneous"};
 
       std::ifstream input_file(file_name);
       if (input_file.is_open()) {

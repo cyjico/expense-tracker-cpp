@@ -71,7 +71,7 @@ void add_expense_page::display_prompt(const application &app,
 
     {
       const auto &valid_categories =
-          app.at_shared_datum<std::unordered_set<std::string>>(
+          app.at_shared_datum<application::valid_categories_datum>(
               "valid_categories");
 
       for (const auto &category : valid_categories) {
@@ -125,7 +125,8 @@ add_expense_page::validate_category(const application &app,
   }
 
   const auto &valid_categories =
-      app.at_shared_datum<std::unordered_set<std::string>>("valid_categories");
+      app.at_shared_datum<application::valid_categories_datum>(
+          "valid_categories");
 
   if (valid_categories.find(inp) == valid_categories.end()) {
     std::string closest_category;

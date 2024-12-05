@@ -58,7 +58,7 @@ by_category_page::find_expenses_under_a_category(const application &app,
   if (category_itr->second.empty()) {
     // Check validity of category
     const auto &valid_categories =
-        app.at_shared_datum<const std::unordered_set<std::string>>(
+        app.at_shared_datum<const application::valid_categories_datum>(
             "valid_categories");
     if (inp.empty() || valid_categories.find(inp) == valid_categories.end()) {
       std::string closest_category;

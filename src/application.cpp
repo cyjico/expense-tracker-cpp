@@ -1,17 +1,37 @@
 #include "application.h"
 #include "events/page_event_emitter.h"
 #include "pages/abstract_page.h"
+#include "pages/add_expense_page.h"
+#include "pages/generate_report_page.h"
+#include "pages/home_page.h"
+#include "pages/search_expenses/by_category_page.h"
+#include "pages/search_expenses/by_datetime_page.h"
+#include "pages/search_expenses_page.h"
+#include "pages/view_expenses_page.h"
 #include <any>
 #include <iostream>
 #include <memory>
 #include <stdexcept>
 #include <string>
 #include <unordered_map>
-#include <utility>
 
-application::application() = default;
+application::application() {
+  auto home_page_ptr = std::make_shared<home_page>();
+  home_page_ptr->attach_listeners(*this);
 
-void application::initialize(page_map pages) { m_pages = std::move(pages); }
+  auto view_expenses_page_ptr = std::make_shared<view_expenses_page>(4);
+  view_expenses_page_ptr->attach_listeners(*this);
+
+  m_pages = {{"/", home_page_ptr},
+             {"/add-expense", std::make_shared<add_expense_page>()},
+             {"/view-expenses", view_expenses_page_ptr},
+             {"/generate-report", std::make_shared<generate_report_page>()},
+             {"/search-expenses", std::make_shared<search_expenses_page>()},
+             {"/search-expenses/by-category",
+              std::make_shared<search_expenses::by_category_page>()},
+             {"/search-expenses/by-datetime",
+              std::make_shared<search_expenses::by_datetime_page>()}};
+}
 
 void application::run_indefinitely() {
   {
