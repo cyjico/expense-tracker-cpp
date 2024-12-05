@@ -84,7 +84,7 @@ date date::from_string(const std::string &date_str) {
 
   date.day = static_cast<uint8_t>(day);
   date.month = static_cast<uint8_t>(month);
-  date.year = static_cast<uint8_t>(year);
+  date.year = static_cast<uint16_t>(year);
   return date;
 }
 
