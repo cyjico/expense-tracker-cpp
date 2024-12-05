@@ -5,6 +5,7 @@
 #include "pages/add_expense_page.h"
 #include "pages/generate_report_page.h"
 #include "pages/home_page.h"
+#include "pages/login_page.h"
 #include "pages/search_expenses/by_category_page.h"
 #include "pages/search_expenses/by_datetime_page.h"
 #include "pages/search_expenses_page.h"
@@ -16,14 +17,15 @@
 #include <string>
 #include <unordered_map>
 
-application::application() {
+application::application() : m_cur_address("/login") {
   auto home_page_ptr = std::make_shared<home_page>();
   home_page_ptr->attach_listeners(*this);
 
   auto view_expenses_page_ptr = std::make_shared<view_expenses_page>(4);
   view_expenses_page_ptr->attach_listeners(*this);
 
-  m_pages = {{"/", home_page_ptr},
+  m_pages = {{"/login", std::make_shared<login_page>()},
+             {"/", home_page_ptr},
              {"/add-expense", std::make_shared<add_expense_page>()},
              {"/add-category", std::make_shared<add_category_page>()},
              {"/generate-report", std::make_shared<generate_report_page>()},

@@ -14,6 +14,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set(INCLUDE_DIR ${CMAKE_SOURCE_DIR}/include)
 set(INCLUDE_FILES
+    # /events/
     ${INCLUDE_DIR}/events/event_emitter.hpp
     ${INCLUDE_DIR}/events/page_event_emitter.h
     # /pages/search_expenses/
@@ -25,6 +26,7 @@ set(INCLUDE_FILES
     ${INCLUDE_DIR}/pages/add_expense_page.h
     ${INCLUDE_DIR}/pages/generate_report_page.h
     ${INCLUDE_DIR}/pages/home_page.h
+    ${INCLUDE_DIR}/pages/login_page.h
     ${INCLUDE_DIR}/pages/search_expenses_page.h
     ${INCLUDE_DIR}/pages/view_expenses_page.h
     # /utils/
@@ -38,6 +40,7 @@ include_directories(${INCLUDE_DIR})
 
 set(SRC_DIR ${CMAKE_SOURCE_DIR}/src)
 set(SRC_FILES
+    # /events/
     ${SRC_DIR}/events/page_event_emitter.cpp
     # /pages/search_expenses/
     ${SRC_DIR}/pages/search_expenses/by_category_page.cpp
@@ -47,6 +50,7 @@ set(SRC_FILES
     ${SRC_DIR}/pages/add_expense_page.cpp
     ${SRC_DIR}/pages/generate_report_page.cpp
     ${SRC_DIR}/pages/home_page.cpp
+    ${SRC_DIR}/pages/login_page.cpp
     ${SRC_DIR}/pages/search_expenses_page.cpp
     ${SRC_DIR}/pages/view_expenses_page.cpp
     # /utils/

@@ -15,7 +15,7 @@ using page_map =
 
 class application {
   page_map m_pages;
-  std::string m_cur_address = "/";
+  std::string m_cur_address;
 
   std::unordered_map<std::string, std::any> m_shared_data;
   page_event_emitter m_onpageload;
